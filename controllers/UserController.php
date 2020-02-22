@@ -9,24 +9,20 @@ use Yii;
 use yii\web\Controller;
 use yii\web\Response;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     /**
      * Login action.
      *
      * @return Response|string
      */
-    public function actionLogin()
-    {
+    public function actionLogin() {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
-
         $model->password = '';
         return $this->render('login', [
             'model' => $model,
@@ -38,13 +34,11 @@ class UserController extends Controller
      *
      * @return Response|string
      */
-    public function actionRegister()
-    {
+    public function actionRegister() {
         //TODO rebuild this action so it can create a registration form
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
         $model = new RegisterForm();
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
             return $this->goBack();
@@ -61,10 +55,12 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function actionLogout()
-    {
+    public function actionLogout() {
         Yii::$app->user->logout();
-
         return $this->goHome();
+    }
+
+    public function actionSaveUser() {
+
     }
 }
