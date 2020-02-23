@@ -3,25 +3,23 @@
 namespace tests\unit\models;
 
 use app\models\LoginForm;
+use Codeception\Test\Unit;
+use Yii;
 
-class LoginFormTest extends \Codeception\Test\Unit
-{
+class LoginFormTest extends Unit {
     private $model;
 
-    protected function _after()
-    {
-        \Yii::$app->user->logout();
+    protected function _after() {
+        Yii::$app->user->logout();
     }
 
-    public function testLoginNoUser()
-    {
+    public function testLoginNoUser() {
         $this->model = new LoginForm([
             'username' => 'not_existing_username',
             'password' => 'not_existing_password',
         ]);
-
         expect_not($this->model->login());
-        expect_that(\Yii::$app->user->isGuest);
+        expect_that(Yii::$app->user->isGuest);
     }
 
     public function testLoginWrongPassword()
@@ -30,9 +28,8 @@ class LoginFormTest extends \Codeception\Test\Unit
             'username' => 'demo',
             'password' => 'wrong_password',
         ]);
-
         expect_not($this->model->login());
-        expect_that(\Yii::$app->user->isGuest);
+        expect_that(Yii::$app->user->isGuest);
         expect($this->model->errors)->hasKey('password');
     }
 
@@ -42,9 +39,8 @@ class LoginFormTest extends \Codeception\Test\Unit
             'username' => 'demo',
             'password' => 'demo',
         ]);
-
         expect_that($this->model->login());
-        expect_not(\Yii::$app->user->isGuest);
+        expect_not(Yii::$app->user->isGuest);
         expect($this->model->errors)->hasntKey('password');
     }
 

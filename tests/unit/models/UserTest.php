@@ -3,14 +3,12 @@
 namespace tests\unit\models;
 
 use app\models\User;
+use Codeception\Test\Unit;
 
-class UserTest extends \Codeception\Test\Unit
-{
-    public function testFindUserById()
-    {
+class UserTest extends Unit {
+    public function testFindUserById() {
         expect_that($user = User::findIdentity(100));
         expect($user->username)->equals('admin');
-
         expect_not(User::findIdentity(999));
     }
 
