@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use yii\db\ActiveRecord;
 use yii\db\Exception;
 
 /**
@@ -40,6 +41,8 @@ class LoginForm extends Model {
      *
      * @param string $attribute the attribute currently being validated
      * @param array  $params    the additional name-value pairs given in the rule
+     *
+     * @throws Exception
      */
     public function validatePassword($attribute, $params) {
         if (!$this->hasErrors()) {
@@ -74,7 +77,7 @@ class LoginForm extends Model {
     /**
      * Finds user by [[username]]
      *
-     * @return User|null
+     * @return array|bool|ActiveRecord
      * @throws Exception
      */
     public function getUser() {
