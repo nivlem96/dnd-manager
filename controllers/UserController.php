@@ -37,7 +37,6 @@ class UserController extends Controller {
      * @return Response|string
      */
     public function actionRegister() {
-        //TODO rebuild this action so it can create a registration form
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
