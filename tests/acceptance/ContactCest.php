@@ -4,8 +4,7 @@ use yii\helpers\Url;
 
 class ContactCest
 {
-    public function _before(\AcceptanceTester $I)
-    {
+    public function _before(AcceptanceTester $I) {
         $I->amOnPage(Url::toRoute('/site/contact'));
     }
     
