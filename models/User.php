@@ -5,7 +5,6 @@ namespace app\models;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveRecord;
-use yii\db\Query;
 use yii\web\IdentityInterface;
 
 class User extends ActiveRecord implements IdentityInterface {
@@ -30,34 +29,16 @@ class User extends ActiveRecord implements IdentityInterface {
 
     /**
      * {@inheritdoc}
-     * @throws \yii\db\Exception
      */
     public static function findIdentity($id) {
-        $query = new Query;
-        return $query->select('*')->from('user')->where('id=:id', [':id' => $id])->createCommand()->queryAll();
+        return static::findOne($id);
     }
 
     /**
      * {@inheritdoc}
-     * @throws \yii\db\Exception
      */
     public static function findIdentityByAccessToken($token, $type = null) {
-        $query = new Query;
-        return $query->select('*')->from('user')->where('accessToken=:token', [':token' => $token])->createCommand()->queryAll();
-    }
-
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     *
-     * @return array|ActiveRecord
-     * @throws \yii\db\Exception
-     */
-    public static function findByUsername($username) {
-        return User::find()
-            ->where(['username' => $username])
-            ->one();
+        return static::findOne(['access_token' => $token]);
     }
 
     /**
@@ -82,20 +63,17 @@ class User extends ActiveRecord implements IdentityInterface {
     }
 
     /**
-     * Validates password
+     * Finds user by username
      *
-     * @param string $password password to validate
+     * @param string $username
      *
-     * @return bool if password provided is valid for current user
-     * @throws Exception
+     * @return array|ActiveRecord
+     * @throws \yii\db\Exception
      */
-    public function validatePassword($password) {
-        try {
-            $hash = $data['confirmPassword'] = Yii::$app->getSecurity()->generatePasswordHash($password);
-            return Yii::$app->getSecurity()->validatePassword($password, $hash);
-        } catch (Exception $e) {
-        }
-        return false;
+    public static function findByUsername($username) {
+        return User::find()
+            ->where(['username' => $username])
+            ->one();
     }
 
 
@@ -103,6 +81,8 @@ class User extends ActiveRecord implements IdentityInterface {
         //because the hashes needs to match
         if (!empty($data['password']) && !empty($data['confirmPassword'])) {
             try {
+                $data['authKey'] = Yii::$app->getSecurity()->generateRandomKey();
+                $data['accessKey'] = Yii::$app->getSecurity()->generateRandomKey();
                 $data['password'] = $data['confirmPassword'] = Yii::$app->getSecurity()->generatePasswordHash($data['password']);
             } catch (Exception $e) {
             }
