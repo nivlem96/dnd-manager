@@ -72,6 +72,19 @@ class User extends ActiveRecord implements IdentityInterface {
             ->one();
     }
 
+    public function getCampaigns() {
+        return $this->hasMany(Campaign::className(), ['dm_id' => 'id']);
+    }
+
+    public function getCharacters() {
+        return [];
+//        return $this->hasMany(Character::className(), ['player_id' => 'id']);
+    }
+
+    public function validatePassword($attribute, $params) {
+        return true;
+    }
+
 
     public function saveModel($data = []) {
         //because the hashes needs to match
