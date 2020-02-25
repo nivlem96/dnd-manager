@@ -7,6 +7,12 @@ use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
+/**
+ * Class User
+ * @var Campaign $campaigns
+ * @package app\models
+ *
+ */
 class User extends ActiveRecord implements IdentityInterface {
     public $confirmPassword;
 
