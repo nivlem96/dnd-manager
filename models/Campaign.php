@@ -66,4 +66,9 @@ class Campaign extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'dm_id']);
     }
+
+    public function getEvents()
+    {
+        return $this->hasMany(Event::className(),['id'=>'campaign_id']);
+    }
 }
