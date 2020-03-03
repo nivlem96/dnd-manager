@@ -7,30 +7,28 @@ use Yii;
 /**
  * This is the model class for table "campaign".
  *
- * @property int $id
- * @property string $name
+ * @property int         $id
+ * @property string      $name
  * @property string|null $description
- * @property string $created_at
- * @property string $updated_at
- * @property int|null $dm_id
+ * @property string      $created_at
+ * @property string      $updated_at
+ * @property int|null    $dm_id
  *
- * @property User $dm
+ * @property User        $dm
+ * @property Event       $events
  */
-class Campaign extends \yii\db\ActiveRecord
-{
+class Campaign extends \yii\db\ActiveRecord {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'campaign';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['id', 'name'], 'required'],
             [['id', 'dm_id'], 'integer'],
@@ -45,8 +43,7 @@ class Campaign extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'name' => 'Name',
@@ -62,13 +59,11 @@ class Campaign extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getDm()
-    {
+    public function getDm() {
         return $this->hasOne(User::className(), ['id' => 'dm_id']);
     }
 
-    public function getEvents()
-    {
-        return $this->hasMany(Event::className(),['id'=>'campaign_id']);
+    public function getEvents() {
+        return $this->hasMany(Event::className(), ['campaign_id' => 'id']);
     }
 }
