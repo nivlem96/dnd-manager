@@ -26,7 +26,7 @@ $this->title = $model->name;
 					</tr>
                     <?php foreach ($events as $event): ?>
 						<tr>
-							<td><?= HTML::a($event->title, ['/campaign/viewEvent/', 'id' => $event->id]) ?></td>
+							<td><?= HTML::a($event->title, ['/campaign/event/', 'id' => $event->id]) ?></td>
 						</tr>
                     <?php endforeach; ?>
 				</table>

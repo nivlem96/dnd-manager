@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Event;
 use app\models\User;
 use app\models\Campaign;
 use Yii;
@@ -59,6 +60,24 @@ class CampaignController extends Controller {
         $Campaign = new Campaign();
         $model = $Campaign->findOne($id);
         return $this->render('view', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * @param        $id
+     *
+     * @var Event $model
+     *
+     * @return string|Response
+     */
+    public function actionEvent($id) {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $Event = new Event();
+        $model = $Event->findOne($id);
+        return $this->render('event', [
             'model' => $model,
         ]);
     }
