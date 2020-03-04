@@ -19,7 +19,6 @@ $this->title = $model->name;
 			<h3>Events</h3>
             <?php
             $events = $model->events ?? null;
-            var_dump($events);
             if (!empty($events)): ?>
 				<table>
 					<tr>
@@ -27,7 +26,7 @@ $this->title = $model->name;
 					</tr>
                     <?php foreach ($events as $event): ?>
 						<tr>
-							<td><?= $event->title ?></td>
+							<td><?= HTML::a($event->title, ['/campaign/viewEvent/', 'id' => $event->id]) ?></td>
 						</tr>
                     <?php endforeach; ?>
 				</table>
