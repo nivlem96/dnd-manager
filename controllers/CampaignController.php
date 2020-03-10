@@ -41,6 +41,12 @@ class CampaignController extends Controller {
             return $this->goHome();
         }
         $model = new Campaign();
+        if ($attributes = Yii::$app->request->post('User')) {
+            $attributes['dm_id'] = Yii::$app->user->id;
+            $model->setAttributes($attributes);
+            $model->save();
+            return $this->goBack();
+        }
         return $this->render('create', [
             'model' => $model,
         ]);
