@@ -15,7 +15,7 @@ use yii\web\Response;
  */
 class CampaignController extends Controller {
     /**
-     * @var User $User
+     * @var User     $User
      * @var Campaign $model
      *
      * @return string|Response
@@ -30,8 +30,9 @@ class CampaignController extends Controller {
             'model' => $model,
         ]);
     }
+
     /**
-     * @var User $User
+     * @var User     $User
      * @var Campaign $model
      *
      * @return string|Response
@@ -41,11 +42,16 @@ class CampaignController extends Controller {
             return $this->goHome();
         }
         $model = new Campaign();
-        if ($attributes = Yii::$app->request->post('User')) {
+        if ($attributes = Yii::$app->request->post('Campaign')) {
             $attributes['dm_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
-            $model->save();
-            return $this->goBack();
+            if ($model->validate()) {
+                $model->save();
+                return $this->actionIndex();
+            } else {
+                var_dump($model->getErrors());
+                die;
+            }
         }
         return $this->render('create', [
             'model' => $model,
@@ -73,7 +79,7 @@ class CampaignController extends Controller {
     /**
      * @param        $id
      *
-     * @var Event $model
+     * @var Event    $model
      *
      * @return string|Response
      */

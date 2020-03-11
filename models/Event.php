@@ -7,28 +7,25 @@ use Yii;
 /**
  * This is the model class for table "event".
  *
- * @property int $id
- * @property string $title
+ * @property int         $id
+ * @property string      $title
  * @property string|null $description
- * @property int|null $campaign_id
+ * @property int|null    $campaign_id
  *
- * @property Campaign $campaign
+ * @property Campaign    $campaign
  */
-class Event extends \yii\db\ActiveRecord
-{
+class Event extends \yii\db\ActiveRecord {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'event';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['title'], 'required'],
             [['description'], 'string'],
@@ -41,8 +38,7 @@ class Event extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'title' => 'Title',
@@ -56,8 +52,11 @@ class Event extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCampaign()
-    {
+    public function getCampaign() {
         return $this->hasOne(Campaign::className(), ['id' => 'campaign_id']);
+    }
+
+    public function getEncounters() {
+        return $this->hasMany(Encounter::className(), ['event_id' => 'id']);
     }
 }

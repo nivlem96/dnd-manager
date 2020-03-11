@@ -10,7 +10,7 @@ $this->title = 'Campaigns';
 <h1><?= HTML::encode($this->title) ?></h1>
 
 <div class="campaign-wrapper">
-    <?= HTML::a('+ Start a new campaign',['campaign/create']) ?>
+    <?= HTML::a('+ Start a new campaign', ['campaign/create']) ?>
 
     <?php if(count($model) > 0) :?>
         <table>

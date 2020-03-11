@@ -21,7 +21,7 @@ $this->title = 'Create campaign';
         ],
     ]); ?>
 
-    <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'title')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'description')->textarea() ?>
 
 	<div class="form-group">

@@ -30,7 +30,7 @@ class Campaign extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['id', 'name'], 'required'],
+            [['name'], 'required'],
             [['id', 'dm_id'], 'integer'],
             [['description'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
@@ -65,5 +65,17 @@ class Campaign extends \yii\db\ActiveRecord {
 
     public function getEvents() {
         return $this->hasMany(Event::className(), ['campaign_id' => 'id']);
+    }
+
+    public function getCharacters() {
+        return $this->hasMany(Event::className(), ['campaign_id' => 'id']);
+    }
+
+    public function getEncounters() {
+        return $this->hasMany(Encounter::className(), ['campaign_id' => 'id']);
+    }
+
+    public function getNpcs() {
+        return $this->hasMany(Npc::className(), ['campaign_id' => 'id']);
     }
 }

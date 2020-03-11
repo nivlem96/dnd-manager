@@ -83,8 +83,7 @@ class User extends ActiveRecord implements IdentityInterface {
     }
 
     public function getCharacters() {
-        return [];
-//        return $this->hasMany(Character::className(), ['player_id' => 'id']);
+        return $this->hasMany(Character::className(), ['player_id' => 'id']);
     }
 
     public function validatePassword($attribute, $params) {
