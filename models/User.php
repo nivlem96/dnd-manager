@@ -12,6 +12,14 @@ use yii\web\IdentityInterface;
  * @var Campaign $campaigns
  * @package app\models
  *
+ * @var int    $id
+ * @var string $username
+ * @var string $password
+ * @var string $authKey
+ * @var string $accessKey
+ * @var string $created_at
+ * @var string $updated_at
+ *
  */
 class User extends ActiveRecord implements IdentityInterface {
     public $confirmPassword;
@@ -70,7 +78,6 @@ class User extends ActiveRecord implements IdentityInterface {
      * @param string $username
      *
      * @return array|ActiveRecord
-     * @throws \yii\db\Exception
      */
     public static function findByUsername($username) {
         return User::find()
@@ -95,8 +102,6 @@ class User extends ActiveRecord implements IdentityInterface {
         //because the hashes needs to match
         if (!empty($data['password']) && !empty($data['confirmPassword'])) {
             try {
-                $data['authKey'] = Yii::$app->getSecurity()->generateRandomKey();
-                $data['accessKey'] = Yii::$app->getSecurity()->generateRandomKey();
                 $data['password'] = $data['confirmPassword'] = Yii::$app->getSecurity()->generatePasswordHash($data['password']);
             } catch (Exception $e) {
             }
