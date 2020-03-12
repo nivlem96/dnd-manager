@@ -1,10 +1,8 @@
 <?php
 
-
 namespace app\controllers;
 
 use app\models\LoginForm;
-use app\models\RegisterForm;
 use app\models\User;
 use Yii;
 use yii\web\Controller;
@@ -52,6 +50,21 @@ class UserController extends Controller {
     }
 
     /**
+     * Home action.
+     *
+     * @return Response|string
+     */
+    public function actionHome() {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $model = Yii::$app->user->identity;
+        return $this->render('home', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Logout action.
      *
      * @return Response
@@ -59,9 +72,5 @@ class UserController extends Controller {
     public function actionLogout() {
         Yii::$app->user->logout();
         return $this->goHome();
-    }
-
-    public function actionSaveUser() {
-
     }
 }

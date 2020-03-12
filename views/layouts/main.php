@@ -46,10 +46,11 @@ AppAsset::register($this);
         $items[] = ['label' => 'Register', 'url' => ['/user/register']];
         $items[] = ['label' => 'Login', 'url' => ['/user/login']];
     } else {
+        $items[] = ['label' => Yii::$app->user->identity->username, 'url' => ['/user/home']];
         $items[] = '<li>'
             . Html::beginForm(['/user/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                'Logout',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()

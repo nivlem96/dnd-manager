@@ -7,6 +7,12 @@ use yii\base\Exception;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
+/**
+ * Class User
+ * @var Campaign $campaigns
+ * @package app\models
+ *
+ */
 class User extends ActiveRecord implements IdentityInterface {
     public $confirmPassword;
 
@@ -70,6 +76,18 @@ class User extends ActiveRecord implements IdentityInterface {
         return User::find()
             ->where(['username' => $username])
             ->one();
+    }
+
+    public function getCampaigns() {
+        return $this->hasMany(Campaign::className(), ['dm_id' => 'id']);
+    }
+
+    public function getCharacters() {
+        return $this->hasMany(Character::className(), ['player_id' => 'id']);
+    }
+
+    public function validatePassword($attribute, $params) {
+        return true;
     }
 
 
