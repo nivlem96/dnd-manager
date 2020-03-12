@@ -7,7 +7,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = 'Create event';
+$this->title = 'Create campaign';
 ?>
 <h1><?= HTML::encode($this->title) ?></h1>
 
@@ -21,7 +21,8 @@ $this->title = 'Create event';
         ],
     ]); ?>
 
-    <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'title')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'description')->textarea() ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">

@@ -36,7 +36,7 @@ $this->title = $model->name;
                     <?php endif; ?>
 				</div>
 				<div class="col-12">
-					<h3>Events</h3>
+					<h3>Encounters</h3>
                     <?= HTML::a('+ Create new encounter', ['/encounter/create', 'campaign_id' => $model->id]) ?>
                     <?php
                     $encounters = $model->encounters ?? null;
