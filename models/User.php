@@ -9,6 +9,7 @@ use yii\web\IdentityInterface;
 
 /**
  * Class User
+ * @var Campaign $campaigns
  * @package app\models
  *
  * @var int    $id
@@ -84,10 +85,15 @@ class User extends ActiveRecord implements IdentityInterface {
             ->one();
     }
 
-    /**
-     * @return bool
-     */
-    public function validatePassword() {
+    public function getCampaigns() {
+        return $this->hasMany(Campaign::className(), ['dm_id' => 'id']);
+    }
+
+    public function getCharacters() {
+        return $this->hasMany(Character::className(), ['player_id' => 'id']);
+    }
+
+    public function validatePassword($attribute, $params) {
         return true;
     }
 
