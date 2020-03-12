@@ -46,6 +46,12 @@ AppAsset::register($this);
         $items[] = ['label' => 'Register', 'url' => ['/user/register']];
         $items[] = ['label' => 'Login', 'url' => ['/user/login']];
     } else {
+    	$items[] = [
+    	    'label' => 'Info',
+            'items' => [
+                ['label'=> 'Races', 'url'=>['/race']]
+            ]
+	    ];
         $items[] = ['label' => Yii::$app->user->identity->username, 'url' => ['/user/home']];
         $items[] = '<li>'
             . Html::beginForm(['/user/logout'], 'post')

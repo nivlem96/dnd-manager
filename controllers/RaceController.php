@@ -9,7 +9,16 @@ use yii\web\Response;
 
 class RaceController extends \yii\web\Controller {
     public function actionIndex() {
-        return $this->render('index');
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $Race = new Race();
+        $user = new User(Yii::$app->user->id);
+        $model = $Race->getUserAvailableRaces(Yii::$app->user->id);
+        return $this->render('index', [
+            'model' => $model,
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -18,17 +27,17 @@ class RaceController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionCreate($id) {
+    public function actionCreate() {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
         $model = new Race();
         if ($attributes = Yii::$app->request->post('Race')) {
-            $attributes['campaign_id'] = $id;
+            $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/campaign/view', 'id' => $id]);
+                return $this->goBack(['/race']);
             } else {
                 var_dump($model->getErrors());
             }
@@ -50,9 +59,11 @@ class RaceController extends \yii\web\Controller {
             return $this->goHome();
         }
         $Campaign = new Race();
+        $user = User::findIdentity(Yii::$app->user->id);
         $model = $Campaign->findOne($id);
         return $this->render('view', [
             'model' => $model,
+            'user' => $user,
         ]);
     }
 
