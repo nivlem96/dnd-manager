@@ -20,7 +20,7 @@ class m200313_144941_create_user_table extends Migration
             'lastname' => $this->string(),
             'accessToken' => $this->string(),
             'authKey' => $this->string(),
-            'rank' => $this->integer(),
+            'rank' => $this->integer()->defaultValue(0),
             'created_at' => $this->dateTime(). ' DEFAULT NOW()',
             'updated_at' => $this->dateTime(). ' DEFAULT NOW()',
         ]);
