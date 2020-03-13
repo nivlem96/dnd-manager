@@ -1,5 +1,4 @@
 <?php
-
 /* @var $this View */
 
 /* @var $content string */
@@ -18,11 +17,11 @@ AppAsset::register($this);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="<?= Yii::$app->charset ?>">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
+	<title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
 <body>
@@ -46,12 +45,15 @@ AppAsset::register($this);
         $items[] = ['label' => 'Register', 'url' => ['/user/register']];
         $items[] = ['label' => 'Login', 'url' => ['/user/login']];
     } else {
-    	$items[] = [
-    	    'label' => 'Info',
+        $items[] = [
+            'label' => 'Info',
             'items' => [
-                ['label'=> 'Races', 'url'=>['/race']]
-            ]
-	    ];
+                ['label' => 'Races', 'url' => ['/race']],
+                ['label' => 'Classes', 'url' => ['/character-class']],
+                ['label' => 'Feats', 'url' => ['/feat']],
+                ['label' => 'Spells', 'url' => ['/spell']],
+            ],
+        ];
         $items[] = ['label' => Yii::$app->user->identity->username, 'url' => ['/user/home']];
         $items[] = '<li>'
             . Html::beginForm(['/user/logout'], 'post')
@@ -64,26 +66,26 @@ AppAsset::register($this);
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $items
+        'items' => $items,
     ]);
     NavBar::end();
     ?>
 
-    <div class="container">
+	<div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>
         <?= $content ?>
-    </div>
+	</div>
 </div>
 
 <footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+	<div class="container">
+		<p class="pull-left">&copy; My Company <?= date('Y') ?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
-    </div>
+		<p class="pull-right"><?= Yii::powered() ?></p>
+	</div>
 </footer>
 
 <?php $this->endBody() ?>

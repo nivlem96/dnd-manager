@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 
-/* @var $model app\models\Campaign */
+/* @var $model app\models\CharacterClass */
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
@@ -21,8 +21,7 @@ $this->title = 'Create campaign';
         ],
     ]); ?>
 
-    <?= $form->field($model, 'title')->textInput(['autofocus' => true]) ?>
-    <?= $form->field($model, 'description')->textarea() ?>
+    <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">

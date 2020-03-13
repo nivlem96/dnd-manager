@@ -14,6 +14,7 @@ use Yii;
  *
  * @property Character[] $characters
  * @property Npc[]       $npcs
+ * @property Feat[]      $feats
  */
 class Race extends \yii\db\ActiveRecord {
     /**
@@ -64,10 +65,18 @@ class Race extends \yii\db\ActiveRecord {
         return $this->hasMany(Npc::className(), ['race_id' => 'id']);
     }
 
-    public function getUserAvailableRaces($id) {
+    /**
+     * Gets query for [[Feats]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFeats() {
+        return $this->hasMany(Feat::className(), ['race_id' => 'id']);
+    }
+
+    public static function getUserAvailableRaces($id) {
         return Race::find()
             ->where(['created_by_user_id' => $id])
-            ->orWhere(['created_by_user_id' => null])
-            ->all();
+            ->orWhere(['created_by_user_id' => null]);
     }
 }

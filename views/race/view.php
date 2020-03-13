@@ -5,8 +5,10 @@
  *
  * @var $model app\models\Race
  * @var $user app\models\User
+ * @var $featProvider app\models\Feat
  **/
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use app\models\User;
 
@@ -26,11 +28,29 @@ $this->title = $model->name;
 		</div>
     <?php endif; ?>
 	<div class="row">
-		<div class="col-md-6">
-			<h3>Encounters</h3>
+		<div class="col-1">
+			<h4>Description</h4>
 		</div>
-		<div class="col-md-6">
-			<h3>NPC's</h3>
+		<div class="col-11">
+			<?= $model->description ?>
 		</div>
 	</div>
+	<h3>Feats</h3>
+    <?=
+    GridView::widget([
+        'dataProvider' => $featProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->name, ['/feat/view','id'=>$model->id]);
+                },
+                'format'=>'raw'
+            ],
+            [
+                'attribute' => 'unlocked_at',
+            ],
+        ],
+    ]);
+    ?>
 </div>

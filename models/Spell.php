@@ -47,4 +47,10 @@ class Spell extends \yii\db\ActiveRecord
             'level' => 'Level',
         ];
     }
+
+    public static function getUserAvailableSpells($id) {
+        return Spell::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
 }

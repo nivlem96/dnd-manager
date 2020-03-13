@@ -1,9 +1,31 @@
 <?php
 /* @var $this yii\web\View */
-?>
-<h1>spell/index</h1>
+/* @var $form yii\bootstrap\ActiveForm */
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+/* @var $dataProvider app\models\Spell */
+
+use yii\grid\GridView;
+use yii\helpers\Html;
+
+$this->title = 'Spells';
+?>
+<h1><?= HTML::encode($this->title) ?></h1>
+
+<div class="spell-wrapper">
+    <?= HTML::a('+ Add a new spell', ['spell/create']) ?>
+
+    <?=
+    GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->name, ['/spell/view', 'id' => $model->id]);
+                },
+                'format' => 'raw',
+            ],
+        ],
+    ]);
+    ?>
+</div>
