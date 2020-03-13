@@ -1,9 +1,34 @@
 <?php
 /* @var $this yii\web\View */
-?>
-<h1>race/index</h1>
+/* @var $form yii\bootstrap\ActiveForm */
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+/* @var $dataProvider app\models\Race */
+
+use yii\grid\GridView;
+use yii\helpers\Html;
+
+$this->title = 'Races';
+?>
+<h1><?= HTML::encode($this->title) ?></h1>
+
+<div class="race-wrapper">
+    <?= HTML::a('+ Add a new race', ['race/create']) ?>
+
+    <?=
+    GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->name, ['/race/view','id'=>$model->id]);
+                },
+                'format'=>'raw'
+            ],
+            [
+                'attribute' => 'description',
+            ],
+        ],
+    ]);
+    ?>
+</div>

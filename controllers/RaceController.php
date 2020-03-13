@@ -5,11 +5,26 @@ namespace app\controllers;
 use app\models\Race;
 use app\models\User;
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\web\Response;
 
 class RaceController extends \yii\web\Controller {
     public function actionIndex() {
-        return $this->render('index');
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $user = User::findIdentity(Yii::$app->user->id);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Race::getUserAvailableRaces(Yii::$app->user->id),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -18,17 +33,43 @@ class RaceController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionCreate($id) {
+    public function actionCreate() {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
         $model = new Race();
         if ($attributes = Yii::$app->request->post('Race')) {
-            $attributes['campaign_id'] = $id;
+            $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/campaign/view', 'id' => $id]);
+                return $this->goBack(['/race']);
+            } else {
+                var_dump($model->getErrors());
+            }
+        }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * @var User $User
+     * @var Race $model
+     *
+     * @return string|Response
+     */
+    public function actionEdit($id) {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $model = Race::find()->where(['id'=>$id])->one();
+        if ($attributes = Yii::$app->request->post('Race')) {
+            $attributes['created_by_user_id'] = Yii::$app->user->id;
+            $model->setAttributes($attributes);
+            if ($model->validate()) {
+                $model->save();
+                return $this->goBack(['/race/view','id'=>$id]);
             } else {
                 var_dump($model->getErrors());
             }
@@ -49,11 +90,30 @@ class RaceController extends \yii\web\Controller {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $Campaign = new Race();
-        $model = $Campaign->findOne($id);
+        $Race = new Race();
+        $user = User::findIdentity(Yii::$app->user->id);
+        $model = $Race->findOne($id);
+        $featProvider = new ActiveDataProvider([
+            'query' => $model->getFeats(),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
         return $this->render('view', [
             'model' => $model,
+            'user' => $user,
+            'featProvider' => $featProvider,
         ]);
+    }
+
+    public function actionDelete($id) {
+        $Race = new Race();
+        try {
+            $Race->findOne($id)->delete();
+        } catch (StaleObjectException $e) {
+        } catch (\Throwable $e) {
+        }
+        return $this->goBack(['/race']);
     }
 
 }
