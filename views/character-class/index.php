@@ -1,9 +1,31 @@
 <?php
 /* @var $this yii\web\View */
-?>
-<h1>character-class/index</h1>
+/* @var $form yii\bootstrap\ActiveForm */
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+/* @var $dataProvider app\models\CharacterClass */
+
+use yii\grid\GridView;
+use yii\helpers\Html;
+
+$this->title = 'Classes';
+?>
+<h1><?= HTML::encode($this->title) ?></h1>
+
+<div class="class-wrapper">
+    <?= HTML::a('+ Add a new class', ['character-class/create']) ?>
+
+    <?=
+    GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->name, ['/character-class/view','id'=>$model->id]);
+                },
+                'format'=>'raw'
+            ],
+        ],
+    ]);
+    ?>
+</div>

@@ -10,18 +10,23 @@ use yii\web\IdentityInterface;
 /**
  * Class User
  * @var Campaign $campaigns
- * @package app\models
+ * @var int      $id
+ * @var string   $username
+ * @var string   $password
+ * @var string   $authKey
+ * @var string   $accessKey
+ * @var string   $created_at
+ * @var string   $updated_at
+ * @var int      $rank
  *
- * @var int    $id
- * @var string $username
- * @var string $password
- * @var string $authKey
- * @var string $accessKey
- * @var string $created_at
- * @var string $updated_at
+ * @package app\models
  *
  */
 class User extends ActiveRecord implements IdentityInterface {
+    const RANK_USER = 0;
+    const RANK_MANAGER = 1;
+    const RANK_ADMIN = 2;
+
     public $confirmPassword;
 
     /**
