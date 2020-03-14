@@ -3,13 +3,13 @@
 namespace app\models;
 
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "character".
  *
  * @property int $id
  * @property string $name
- * @property int $class_id
  * @property int $race_id
  * @property string|null $background
  * @property int $player_id
@@ -17,6 +17,7 @@ use Yii;
  *
  * @property Campaign $campaign
  * @property User $player
+ * @property CharacterClass $classes
  */
 class Character extends \yii\db\ActiveRecord
 {
@@ -34,8 +35,8 @@ class Character extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'class_id', 'race_id', 'player_id'], 'required'],
-            [['class_id', 'race_id', 'player_id', 'campaign_id'], 'integer'],
+            [['name', 'race_id', 'player_id'], 'required'],
+            [['race_id', 'player_id', 'campaign_id'], 'integer'],
             [['background'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
@@ -51,7 +52,6 @@ class Character extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'class_id' => 'Class ID',
             'race_id' => 'Race ID',
             'background' => 'Background',
             'player_id' => 'Player ID',
@@ -77,5 +77,22 @@ class Character extends \yii\db\ActiveRecord
     public function getPlayer()
     {
         return $this->hasOne(User::className(), ['id' => 'player_id']);
+    }
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClassRelation()
+    {
+        return $this->hasMany(ClassRelation::className(), ['character_id' => 'id']);
+    }
+
+    public function getClasses()
+    {
+        try {
+            $this->hasMany(CharacterClass::classname(), ['id' => 'class_id'])
+                ->viaTable('class_relation', ['character_id', 'id']);
+        } catch (InvalidConfigException $e) {
+            var_dump($e);die;
+        }
     }
 }

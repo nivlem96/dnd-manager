@@ -4,6 +4,7 @@
 
 /* @var $model app\models\Campaign */
 
+use app\models\Race;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
@@ -22,7 +23,13 @@ $this->title = 'Create character';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+	<?php
+	$userId = Yii::$app->user->id;
+	$races = Race::getUserAvailableRacesArray($userId);
+	echo $form->field($model,'race_id')->dropDownList($races)
+	?>
     <?= $form->field($model, 'background')->textarea() ?>
+	<?= $form->field($model,'player_id')->hiddenInput(['value'=>Yii::$app->user->id])->label(false) ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">
