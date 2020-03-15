@@ -7,6 +7,9 @@
  * @var $user  app\models\User
  **/
 
+use yii\data\ActiveDataProvider;
+use yii\debug\models\timeline\DataProvider;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use app\models\User;
 
@@ -33,14 +36,51 @@ $this->title = $model->name;
             <?= $model->background ?>
 		</div>
 	</div>
-    <?php foreach ($model->classRelation as $key => $relation): ?>
-		<div class="row">
-			<div class="col-1">
-				<h4>Class<?= (int)$key+1 ?>:</h4>
-			</div>
-			<div class="col-11">
-                <?= $relation->class->name . ' ' . $relation->level ?>
-			</div>
-		</div>
-    <?php endforeach; ?>
+	<h3>Classes</h3>
+    <?php
+    $dataProvider = new ActiveDataProvider([
+        'query' => $model->getClassRelation(),
+        'pagination' => [
+            'pageSize' => 20,
+        ],
+    ]);
+
+    echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->class->name, ['/character-class/view', 'id' => $model->class->id]);
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'level',
+            ],
+        ],
+    ]);
+    ?>
+	<h3>Feats</h3>
+    <?php
+    $dataProvider = new ActiveDataProvider([
+        'query' => $model->getFeatRelation(),
+        'pagination' => [
+            'pageSize' => 20,
+        ],
+    ]);
+
+    echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->feat->name, ['/feat/view', 'id' => $model->feat->id]);
+                },
+                'format' => 'raw',
+            ],
+        ],
+    ]);
+    ?>
 </div>

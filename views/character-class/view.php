@@ -27,14 +27,6 @@ $this->title = $model->name;
 			</div>
 		</div>
     <?php endif; ?>
-	<div class="row">
-		<div class="col-1">
-			<h4>Description</h4>
-		</div>
-		<div class="col-11">
-			<?= $model->description ?>
-		</div>
-	</div>
 	<h3>Feats</h3>
     <?=
     GridView::widget([
