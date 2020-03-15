@@ -1,9 +1,37 @@
 <?php
 /* @var $this yii\web\View */
-?>
-<h1>character/index</h1>
+/* @var $form yii\bootstrap\ActiveForm */
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+/* @var $dataProvider app\models\Character */
+
+use yii\grid\GridView;
+use yii\helpers\Html;
+
+$this->title = 'Spells';
+?>
+<h1><?= HTML::encode($this->title) ?></h1>
+
+<div class="spell-wrapper">
+    <?= HTML::a('+ Add a new character', ['character/create']) ?>
+
+    <?=
+    GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'attribute' => 'name',
+                'value' => function ($model) {
+                    return Html::a($model->name, ['/character/view', 'id' => $model->id]);
+                },
+                'format' => 'raw',
+            ],
+            [
+                'attribute' => 'campaign_id',
+                'value' => function ($model) {
+                    return $model->campaign ? $model->campaign->name : null;
+                },
+            ],
+        ],
+    ]);
+    ?>
+</div>

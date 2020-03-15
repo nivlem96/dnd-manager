@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "character_class".
@@ -43,15 +44,6 @@ class CharacterClass extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[Characters]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCharacters() {
-        return $this->hasMany(Character::className(), ['class_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Npcs]].
      *
      * @return \yii\db\ActiveQuery
@@ -69,9 +61,25 @@ class CharacterClass extends \yii\db\ActiveRecord {
         return $this->hasMany(Feat::className(), ['class_id' => 'id']);
     }
 
+    public function getCharacters() {
+        return $this->hasMany(Character::classname(), ['id' => 'character_id'])->viaTable('class_relation', ['class_id', 'id']);
+    }
+
     public static function getUserAvailableClasses($id) {
         return CharacterClass::find()
             ->where(['created_by_user_id' => $id])
             ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableClassesArray($id) {
+        $classes = CharacterClass::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->all();
+        $result = [];
+        foreach ($classes as $class) {
+            $result[$class->id] = $class->name;
+        }
+        return $result;
     }
 }
