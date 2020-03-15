@@ -8,17 +8,17 @@ use yii\base\InvalidConfigException;
 /**
  * This is the model class for table "character".
  *
- * @property int                 $id
- * @property string              $name
- * @property int                 $race_id
- * @property string|null         $background
- * @property int                 $player_id
- * @property int|null            $campaign_id
+ * @property int           $id
+ * @property string        $name
+ * @property int           $race_id
+ * @property string|null   $background
+ * @property int           $player_id
+ * @property int|null      $campaign_id
  *
- * @property Campaign            $campaign
- * @property User                $player
- * @property CharacterClass      $classes
- * @property \yii\db\ActiveQuery $classRelation
+ * @property Campaign      $campaign
+ * @property User          $player
+ * @property ClassRelation $classRelation
+ * @property FeatRelation  $featRelation
  */
 class Character extends \yii\db\ActiveRecord {
     /**
@@ -81,7 +81,10 @@ class Character extends \yii\db\ActiveRecord {
         return $this->hasMany(ClassRelation::className(), ['character_id' => 'id']);
     }
 
-    public function getClasses() {
-        return $this->hasMany(CharacterClass::classname(), ['id' => 'class_id'])->via('classRelation');
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFeatRelation() {
+        return $this->hasMany(FeatRelation::className(), ['character_id' => 'id']);
     }
 }
