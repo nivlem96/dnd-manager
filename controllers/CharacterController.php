@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Character;
+use app\models\ClassRelation;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -31,16 +32,25 @@ class CharacterController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionCreate($campaign_id) {
+    public function actionCreate($campaign_id = null) {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
         $model = new Character();
+        $relationModel = new ClassRelation();
         if ($attributes = Yii::$app->request->post('Character')) {
             $attributes['campaign_id'] = $campaign_id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
+                $id = Yii::$app->db->getLastInsertID();
+                if ($attributes = Yii::$app->request->post('ClassRelation')) {
+                    $relationModel->character_id = $id;
+                    $relationModel->class_id = $attributes['class_id'];
+                    if ($relationModel->validate()) {
+                        $relationModel->save();
+                    }
+                }
                 return $this->actionIndex();
             } else {
                 var_dump($model->getErrors());
@@ -71,7 +81,7 @@ class CharacterController extends \yii\web\Controller {
                 var_dump($model->getErrors());
             }
         }
-        return $this->render('create', [
+        return $this->render('edit', [
             'model' => $model,
         ]);
     }
@@ -99,6 +109,7 @@ class CharacterController extends \yii\web\Controller {
     public function actionDelete($id) {
         $Character = new Character();
         try {
+            ClassRelation::deleteAll(['character_id'=>$id]);
             $Character->findOne($id)->delete();
         } catch (StaleObjectException $e) {
         } catch (\Throwable $e) {

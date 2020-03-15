@@ -11,6 +11,9 @@ use Yii;
  * @property int $class_id
  * @property int $character_id
  * @property int $level
+ *
+ * @property Character $character
+ * @property CharacterClass $class
  */
 class ClassRelation extends \yii\db\ActiveRecord
 {
@@ -30,6 +33,8 @@ class ClassRelation extends \yii\db\ActiveRecord
         return [
             [['class_id', 'character_id'], 'required'],
             [['class_id', 'character_id', 'level'], 'integer'],
+            [['character_id'], 'exist', 'skipOnError' => true, 'targetClass' => Character::className(), 'targetAttribute' => ['character_id' => 'id']],
+            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::className(), 'targetAttribute' => ['class_id' => 'id']],
         ];
     }
 
@@ -44,5 +49,25 @@ class ClassRelation extends \yii\db\ActiveRecord
             'character_id' => 'Character ID',
             'level' => 'Level',
         ];
+    }
+
+    /**
+     * Gets query for [[Character]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCharacter()
+    {
+        return $this->hasOne(Character::className(), ['id' => 'character_id']);
+    }
+
+    /**
+     * Gets query for [[Class]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClass()
+    {
+        return $this->hasOne(CharacterClass::className(), ['id' => 'class_id']);
     }
 }

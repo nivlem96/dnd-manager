@@ -24,18 +24,6 @@ $this->title = 'Create character';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
-	<?php
-	$userId = Yii::$app->user->id;
-	$races = Race::getUserAvailableRacesArray($userId);
-    $classes = CharacterClass::getUserAvailableClassesArray($userId);
-	echo $form->field($model,'race_id')->dropDownList($races)->label('Race');?>
-	<div class="form-group field-character-race_id required has-success">
-		<label class="col-lg-1 control-label" for="class_relation-class_id">Class</label>
-		<div class="col-lg-3">
-            <?= HTML::dropDownList('ClassRelation[class_id]',[],$classes,['class'=>'form-control']) ?>
-		</div>
-		<div class="col-lg-8"><p class="help-block help-block-error "></p></div>
-	</div>
     <?= $form->field($model, 'background')->textarea() ?>
 	<?= $form->field($model,'player_id')->hiddenInput(['value'=>Yii::$app->user->id])->label(false) ?>
 

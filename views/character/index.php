@@ -28,7 +28,7 @@ $this->title = 'Spells';
             [
                 'attribute' => 'campaign_id',
                 'value' => function ($model) {
-                    return $model->campaign->name;
+                    return $model->campaign ? $model->campaign->name : null;
                 },
             ],
         ],

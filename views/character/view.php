@@ -4,7 +4,7 @@
  * @var $form  yii\bootstrap\ActiveForm
  *
  * @var $model app\models\Character
- * @var $user app\models\User
+ * @var $user  app\models\User
  **/
 
 use yii\helpers\Html;
@@ -26,14 +26,21 @@ $this->title = $model->name;
 		</div>
     <?php endif; ?>
 	<div class="row">
+		<div class="col-1">
+			<h4>Background</h4>
+		</div>
+		<div class="col-11">
+            <?= $model->background ?>
+		</div>
+	</div>
+    <?php foreach ($model->classRelation as $key => $relation): ?>
 		<div class="row">
 			<div class="col-1">
-				<h4>Background</h4>
+				<h4>Class<?= (int)$key+1 ?>:</h4>
 			</div>
 			<div class="col-11">
-                <?= $model->background ?>
+                <?= $relation->class->name . ' ' . $relation->level ?>
 			</div>
 		</div>
-		<?php var_dump($model->getClasses()); ?>
-	</div>
+    <?php endforeach; ?>
 </div>
