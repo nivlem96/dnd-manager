@@ -79,4 +79,16 @@ class Race extends \yii\db\ActiveRecord {
             ->where(['created_by_user_id' => $id])
             ->orWhere(['created_by_user_id' => null]);
     }
+
+    public static function getUserAvailableRacesArray($id) {
+        $races = Race::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->all();
+        $result = [];
+        foreach ($races as $race) {
+            $result[$race->id] = $race->name;
+        }
+        return $result;
+    }
 }

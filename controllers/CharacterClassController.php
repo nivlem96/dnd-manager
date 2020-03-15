@@ -39,11 +39,10 @@ class CharacterClassController extends \yii\web\Controller {
         }
         $model = new CharacterClass();
         if ($attributes = Yii::$app->request->post('CharacterClass')) {
-            $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/CharacterClass']);
+                return $this->goBack(['/character-class']);
             } else {
                 var_dump($model->getErrors());
             }
