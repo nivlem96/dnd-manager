@@ -37,19 +37,17 @@ class CharacterController extends \yii\web\Controller {
             return $this->goHome();
         }
         $model = new Character();
-        $relationModel = new ClassRelation();
         if ($attributes = Yii::$app->request->post('Character')) {
             $attributes['campaign_id'] = $campaign_id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                $id = Yii::$app->db->getLastInsertID();
                 if ($attributes = Yii::$app->request->post('ClassRelation')) {
-                    $relationModel->character_id = $id;
-                    $relationModel->class_id = $attributes['class_id'];
-                    if ($relationModel->validate()) {
-                        $relationModel->save();
-                    }
+                    $classData = [
+                        'character_id' => Yii::$app->db->getLastInsertID(),
+                        'class_id' => $attributes['class_id'],
+                    ];
+                    $this->saveClassRelation($classData);
                 }
                 return $this->actionIndex();
             } else {
@@ -109,12 +107,28 @@ class CharacterController extends \yii\web\Controller {
     public function actionDelete($id) {
         $Character = new Character();
         try {
-            ClassRelation::deleteAll(['character_id'=>$id]);
+            ClassRelation::deleteAll(['character_id' => $id]);
             $Character->findOne($id)->delete();
         } catch (StaleObjectException $e) {
         } catch (\Throwable $e) {
         }
         return $this->goBack(['/character']);
+    }
+
+    private function saveClassRelation(array $data) {
+        $relationModel = null;
+        if(!empty($data['id'])) {
+            $relationModel = ClassRelation::findOne($data['id']);
+        }
+        if($relationModel == null) {
+            $relationModel = new ClassRelation();
+        }
+        foreach ($data as $key=>$value) {
+            $relationModel->$key = $value;
+        }
+        if ($relationModel->validate()) {
+            $relationModel->save();
+        }
     }
 
 }
