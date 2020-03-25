@@ -15,7 +15,7 @@ use app\models\User;
 
 $this->title = $model->name;
 ?>
-<h1><?= HTML::encode($this->title) ?></h1>
+<h1><?= HTML::encode($this->title) . ' ' . $model->level?></h1>
 
 <div class="campaign-wrapper">
     <?php if ($model->player_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
@@ -57,6 +57,13 @@ $this->title = $model->name;
             ],
             [
                 'attribute' => 'level',
+            ],
+            [
+                'label' => 'Level Up',
+                'value' => function ($model) {
+                    return Html::a('Level up', ['/character/level-up', 'classId' => $model->class->id,'characterId' => $model->id]);
+                },
+                'format' => 'raw',
             ],
         ],
     ]);

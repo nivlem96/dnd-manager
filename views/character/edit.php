@@ -2,7 +2,7 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 
-/* @var $model app\models\Campaign */
+/* @var $model app\models\Character */
 
 use app\models\Race;
 use app\models\CharacterClass;
