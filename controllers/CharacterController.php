@@ -104,6 +104,29 @@ class CharacterController extends \yii\web\Controller {
         ]);
     }
 
+    /**
+     * @param $classId
+     * @param $characterId
+     *
+     * @return string|Response
+     */
+    public function actionLevelUp($classId, $characterId) {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        $Character = new Character();
+        $model = $Character->findOne($characterId);
+        $model->level = $model->level + 1;
+        $model->save();
+        $classRelation = $model->getClassRelation();
+        if ($relation = $classRelation->where(['=','class_id',$classId])->one()) {
+            $relation->level = $relation->level + 1;
+            $relation->save();
+        }
+        $this->goBack(['character/view','id'=>$characterId]);
+
+    }
+
     public function actionDelete($id) {
         $Character = new Character();
         try {
@@ -117,13 +140,13 @@ class CharacterController extends \yii\web\Controller {
 
     private function saveClassRelation(array $data) {
         $relationModel = null;
-        if(!empty($data['id'])) {
+        if (!empty($data['id'])) {
             $relationModel = ClassRelation::findOne($data['id']);
         }
-        if($relationModel == null) {
+        if ($relationModel == null) {
             $relationModel = new ClassRelation();
         }
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             $relationModel->$key = $value;
         }
         if ($relationModel->validate()) {

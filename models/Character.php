@@ -14,6 +14,7 @@ use yii\base\InvalidConfigException;
  * @property string|null   $background
  * @property int           $player_id
  * @property int|null      $campaign_id
+ * @property int           $level
  *
  * @property Campaign      $campaign
  * @property User          $player
@@ -34,7 +35,7 @@ class Character extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['name', 'race_id', 'player_id'], 'required'],
-            [['race_id', 'player_id', 'campaign_id'], 'integer'],
+            [['race_id', 'player_id', 'campaign_id', 'level'], 'integer'],
             [['background'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
@@ -49,6 +50,7 @@ class Character extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'level' => 'Level',
             'race_id' => 'Race ID',
             'background' => 'Background',
             'player_id' => 'Player ID',
