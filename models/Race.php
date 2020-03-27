@@ -85,7 +85,9 @@ class Race extends \yii\db\ActiveRecord {
             ->where(['created_by_user_id' => $id])
             ->orWhere(['created_by_user_id' => null])
             ->all();
-        $result = [];
+        $result = [
+            null => ''
+        ];
         foreach ($races as $race) {
             $result[$race->id] = $race->name;
         }

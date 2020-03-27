@@ -76,7 +76,9 @@ class CharacterClass extends \yii\db\ActiveRecord {
             ->where(['created_by_user_id' => $id])
             ->orWhere(['created_by_user_id' => null])
             ->all();
-        $result = [];
+        $result = [
+            null => ''
+        ];
         foreach ($classes as $class) {
             $result[$class->id] = $class->name;
         }
