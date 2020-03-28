@@ -94,7 +94,13 @@ class RaceController extends \yii\web\Controller {
         $user = User::findIdentity(Yii::$app->user->id);
         $model = $Race->findOne($id);
         $featProvider = new ActiveDataProvider([
-            'query' => $model->getFeats(),
+            'query' => $model->getUserAvailableFeats(Yii::$app->user->id),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+        $subRaceProvider = new ActiveDataProvider([
+            'query' => $model->getUserAvailableSubRaces(Yii::$app->user->id),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -103,6 +109,7 @@ class RaceController extends \yii\web\Controller {
             'model' => $model,
             'user' => $user,
             'featProvider' => $featProvider,
+            'subRaceProvider' => $subRaceProvider,
         ]);
     }
 

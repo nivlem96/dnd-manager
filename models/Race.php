@@ -74,6 +74,20 @@ class Race extends \yii\db\ActiveRecord {
         return $this->hasMany(Feat::className(), ['race_id' => 'id']);
     }
 
+    public function getUserAvailableFeats($id) {
+        return Feat::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->andWhere(['race_id' => $this->id]);
+    }
+
+    public function getUserAvailableSubRaces($id) {
+        return SubRace::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->andWhere(['race_id' => $this->id]);
+    }
+
     public static function getUserAvailableRaces($id) {
         return Race::find()
             ->where(['created_by_user_id' => $id])
