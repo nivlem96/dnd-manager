@@ -28,6 +28,7 @@ $this->title = 'Create race';
     $userId = Yii::$app->user->id;
     $races = User::getUserAvailableRacesArray($userId);
     echo $form->field($model,'parent_id')->dropDownList($races)->label('Parent');?>
+    <?= $form->field($model, 'description')->textarea() ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">
