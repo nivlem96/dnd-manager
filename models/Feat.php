@@ -55,26 +55,11 @@ class Feat extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Gets query for [[SubRace]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSubRace() {
-        return $this->hasOne(SubRace::className(), ['id' => 'sub_race_id']);
-    }
-
-    /**
      * Gets query for [[Class]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::className(), ['id' => 'class_id']);
-    }
-
-    public static function getUserAvailableFeats($id) {
-        return Feat::find()
-            ->where(['created_by_user_id' => $id])
-            ->orWhere(['created_by_user_id' => null]);
     }
 }

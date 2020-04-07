@@ -6,7 +6,7 @@
  * @var $model           app\models\Race
  * @var $user            app\models\User
  * @var $featProvider    app\models\Feat
- * @var $subRaceProvider app\models\SubRace
+ * @var $subRaceProvider app\models\Race
  **/
 
 use yii\grid\GridView;
@@ -15,30 +15,37 @@ use app\models\User;
 
 $this->title = $model->name;
 ?>
-<h1><?= HTML::encode($this->title) ?></h1>
+<h1><?= !empty($model->parent) ? $model->name . ' (' . HTML::a($model->parent->name, ['/race/view', 'id' => $model->parent->id]) . ')' : $model->name ?></h1>
 
 <div class="campaign-wrapper">
     <?php if ($model->created_by_user_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
-        <div class="row">
-            <div class="col-md-6">
+		<div class="row">
+			<div class="col-md-6">
                 <?= Html::a('delete', ['/race/delete', 'id' => $model->id]) ?>
-            </div>
-            <div class="col-md-6">
+			</div>
+			<div class="col-md-6">
                 <?= Html::a('edit', ['/race/edit', 'id' => $model->id]) ?>
-            </div>
-        </div>
+			</div>
+		</div>
     <?php endif; ?>
-    <div class="row">
-        <div class="col-1">
-            <h4>Description</h4>
-        </div>
-        <div class="col-11">
+	<div class="row">
+		<div class="col-1">
+			<h4>Description</h4>
+		</div>
+		<div class="col-11">
             <?= $model->description ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Feats</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<h3>Feats</h3>
+            <?php if ($model->created_by_user_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
+				<div class="row">
+					<div class="col-md-12">
+                        <?= Html::a('add', ['/feat/create', 'race_id' => $model->id]) ?>
+					</div>
+				</div>
+            <?php endif; ?>
             <?=
             GridView::widget([
                 'dataProvider' => $featProvider,
@@ -56,15 +63,15 @@ $this->title = $model->name;
                 ],
             ]);
             ?>
-        </div>
-        <div class="col-md-6">
-            <h3>Sub races</h3>
+		</div>
+		<div class="col-md-6">
+			<h3>Sub races</h3>
             <?php if ($model->created_by_user_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
-                <div class="row">
-                    <div class="col-md-12">
-                        <?= Html::a('add', ['/sub-race/add', 'race_id' => $model->id]) ?>
-                    </div>
-                </div>
+				<div class="row">
+					<div class="col-md-12">
+                        <?= Html::a('add', ['/race/create', 'parent_id' => $model->id]) ?>
+					</div>
+				</div>
             <?php endif; ?>
             <?=
             GridView::widget([
@@ -73,13 +80,13 @@ $this->title = $model->name;
                     [
                         'attribute' => 'name',
                         'value' => function ($model) {
-                            return Html::a($model->name, ['/sub-race/view', 'id' => $model->id]);
+                            return Html::a($model->name, ['/race/view', 'id' => $model->id]);
                         },
                         'format' => 'raw',
                     ],
                 ],
             ]);
             ?>
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
