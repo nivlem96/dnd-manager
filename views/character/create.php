@@ -6,6 +6,7 @@
 
 use app\models\Race;
 use app\models\CharacterClass;
+use app\models\User;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
@@ -26,8 +27,8 @@ $this->title = 'Create character';
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
 	<?php
 	$userId = Yii::$app->user->id;
-	$races = Race::getUserAvailableRacesArray($userId);
-    $classes = CharacterClass::getUserAvailableClassesArray($userId);
+	$races = User::getUserAvailableRacesArray($userId);
+    $classes = User::getUserAvailableClassesArray($userId);
 	echo $form->field($model,'race_id')->dropDownList($races)->label('Race');?>
 	<div class="form-group field-character-race_id required has-success">
 		<label class="col-lg-1 control-label" for="class_relation-class_id">Class</label>

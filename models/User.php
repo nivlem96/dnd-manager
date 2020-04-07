@@ -119,4 +119,66 @@ class User extends ActiveRecord implements IdentityInterface {
             var_dump($this->getErrors());
         }
     }
+
+    public static function getUserAvailableFeats($id) {
+        return Feat::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableFeatsByRace($id,$race_id) {
+        return Feat::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->andWhere(['race_id' => $race_id]);
+    }
+
+    public static function getUserAvailableRaces($id) {
+        return Race::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableSubRaces($id,$raceId) {
+        return Race::find()
+            ->where(['parent_id'=>$raceId])
+            ->andWhere(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableClasses($id) {
+        return CharacterClass::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableSpells($id) {
+        return Spell::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableClassesArray($id) {
+        $classes = CharacterClass::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->all();
+        $result = [null=>''];
+        foreach ($classes as $class) {
+            $result[$class->id] = $class->name;
+        }
+        return $result;
+    }
+
+    public static function getUserAvailableRacesArray($id) {
+        $races = Race::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null])
+            ->all();
+        $result = [null=>''];
+        foreach ($races as $race) {
+            $result[$race->id] = $race->name;
+        }
+        return $result;
+    }
 }

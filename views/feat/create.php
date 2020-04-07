@@ -4,10 +4,11 @@
 
 /* @var $model app\models\Feat */
 
+use app\models\User;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = 'Create campaign';
+$this->title = 'Create feat';
 ?>
 <h1><?= HTML::encode($this->title) ?></h1>
 
@@ -21,7 +22,14 @@ $this->title = 'Create campaign';
         ],
     ]); ?>
 
-    <?= $form->field($model, 'title')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?php
+    $userId = Yii::$app->user->id;
+    $races = User::getUserAvailableRacesArray($userId);
+    $classes = User::getUserAvailableClassesArray($userId);
+    echo $form->field($model,'race_id')->dropDownList($races)->label('Race');
+    echo $form->field($model,'class_id')->dropDownList($classes)->label('Class');
+    ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">
