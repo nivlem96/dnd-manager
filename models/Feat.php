@@ -27,10 +27,11 @@ class Feat extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name'], 'required'],
+            [['name','unlocked_at'], 'required'],
             [['description'], 'string'],
             ['class_id', 'either', 'params' => ['other' => 'race_id']],
             [['name'], 'string', 'max' => 255],
+            [['unlocked_at'], 'integer'],
         ];
     }
 
