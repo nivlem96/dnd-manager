@@ -5,6 +5,7 @@
 /* @var $model app\models\Race */
 
 use app\models\Race;
+use app\models\User;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
