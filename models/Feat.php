@@ -27,9 +27,11 @@ class Feat extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name'], 'required'],
+            [['name','unlocked_at'], 'required'],
             [['description'], 'string'],
+            ['class_id', 'either', 'params' => ['other' => 'race_id']],
             [['name'], 'string', 'max' => 255],
+            [['unlocked_at'], 'integer'],
         ];
     }
 
@@ -61,5 +63,14 @@ class Feat extends \yii\db\ActiveRecord {
      */
     public function getClass() {
         return $this->hasOne(CharacterClass::className(), ['id' => 'class_id']);
+    }
+
+    public function either($attribute_name, $params)
+    {
+        $field1 = $this->getAttributeLabel($attribute_name);
+        $field2 = $this->getAttributeLabel($params['other']);
+        if (empty($this->$attribute_name) && empty($this->{$params['other']})) {
+            $this->addError($attribute_name, "either {$field1} or {$field2} is required.");
+        }
     }
 }

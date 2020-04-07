@@ -13,22 +13,24 @@ $this->title = 'Create feat';
 <h1><?= HTML::encode($this->title) ?></h1>
 
 <div class="campaign-wrapper">
-    <?php $form = ActiveForm::begin([
+    <?php
+    $form = ActiveForm::begin([
         'id' => 'campaign-form',
         'layout' => 'horizontal',
         'fieldConfig' => [
             'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
             'labelOptions' => ['class' => 'col-lg-1 control-label'],
         ],
-    ]); ?>
+    ]);
 
-    <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
-    <?php
     $userId = Yii::$app->user->id;
     $races = User::getUserAvailableRacesArray($userId);
     $classes = User::getUserAvailableClassesArray($userId);
-    echo $form->field($model,'race_id')->dropDownList($races)->label('Race');
-    echo $form->field($model,'class_id')->dropDownList($classes)->label('Class');
+    echo $form->field($model, 'name')->textInput(['autofocus' => true]);
+    echo $form->field($model, 'unlocked_at')->input('number', ['min' => 1]);
+    echo $form->field($model, 'race_id')->dropDownList($races)->label('Race');
+    echo $form->field($model, 'class_id')->dropDownList($classes)->label('Class');
+    echo $form->field($model, 'description')->textarea();
     ?>
 
 	<div class="form-group">

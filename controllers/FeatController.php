@@ -41,8 +41,8 @@ class FeatController extends \yii\web\Controller {
         $model->race_id = $race_id;
         $model->class_id = $class_id;
         if ($attributes = Yii::$app->request->post('Feat')) {
-            $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
+            $model->created_by_user_id = Yii::$app->user->id;
             if ($model->validate()) {
                 $model->save();
                 return $this->goBack(['/feat']);
@@ -69,6 +69,7 @@ class FeatController extends \yii\web\Controller {
         if ($attributes = Yii::$app->request->post('Feat')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
+            $model->created_by_user_id = Yii::$app->user->id;
             if ($model->validate()) {
                 $model->save();
                 return $this->goBack(['/feat/view','id'=>$id]);

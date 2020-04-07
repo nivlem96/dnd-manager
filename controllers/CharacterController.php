@@ -42,14 +42,15 @@ class CharacterController extends \yii\web\Controller {
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
+                $id = Yii::$app->db->getLastInsertID();
                 if ($attributes = Yii::$app->request->post('ClassRelation')) {
                     $classData = [
-                        'character_id' => Yii::$app->db->getLastInsertID(),
+                        'character_id' => $id,
                         'class_id' => $attributes['class_id'],
                     ];
                     $this->saveClassRelation($classData);
                 }
-                return $this->actionIndex();
+                return $this->goBack(['/character/view', 'id' => $id]);
             } else {
                 var_dump($model->getErrors());
             }
@@ -119,11 +120,11 @@ class CharacterController extends \yii\web\Controller {
         $model->level = $model->level + 1;
         $model->save();
         $classRelation = $model->getClassRelation();
-        if ($relation = $classRelation->where(['=','class_id',$classId])->one()) {
+        if ($relation = $classRelation->where(['=', 'class_id', $classId])->one()) {
             $relation->level = $relation->level + 1;
             $relation->save();
         }
-        $this->goBack(['character/view','id'=>$characterId]);
+        $this->goBack(['character/view', 'id' => $characterId]);
 
     }
 
