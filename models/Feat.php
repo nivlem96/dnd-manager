@@ -72,10 +72,4 @@ class Feat extends \yii\db\ActiveRecord {
             $this->addError($attribute_name, "either {$field1} or {$field2} is required.");
         }
     }
-
-    public static function getUserAvailableFeats($id) {
-        return Feat::find()
-            ->where(['created_by_user_id' => $id])
-            ->orWhere(['created_by_user_id' => null]);
-    }
 }

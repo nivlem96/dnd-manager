@@ -68,6 +68,15 @@ class Character extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Gets query for [[Race]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRace() {
+        return $this->hasOne(Race::className(), ['id' => 'race_id']);
+    }
+
+    /**
      * Gets query for [[Player]].
      *
      * @return \yii\db\ActiveQuery

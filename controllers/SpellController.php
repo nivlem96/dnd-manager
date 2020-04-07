@@ -16,7 +16,7 @@ class SpellController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => Spell::getUserAvailableSpells(Yii::$app->user->id),
+            'query' => User::getUserAvailableSpells(Yii::$app->user->id),
             'pagination' => [
                 'pageSize' => 20,
             ],

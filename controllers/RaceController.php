@@ -16,7 +16,7 @@ class RaceController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => Race::getUserAvailableRaces(Yii::$app->user->id),
+            'query' => User::getUserAvailableRaces(Yii::$app->user->id),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -33,11 +33,12 @@ class RaceController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionCreate() {
+    public function actionCreate($parent_id = null) {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
         $model = new Race();
+        $model->parent_id = $parent_id;
         if ($attributes = Yii::$app->request->post('Race')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
@@ -94,7 +95,13 @@ class RaceController extends \yii\web\Controller {
         $user = User::findIdentity(Yii::$app->user->id);
         $model = $Race->findOne($id);
         $featProvider = new ActiveDataProvider([
-            'query' => $model->getFeats(),
+            'query' => User::getUserAvailableFeatsByRace(Yii::$app->user->id,$id),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+        $subRaceProvider = new ActiveDataProvider([
+            'query' => User::getUserAvailableSubRaces(Yii::$app->user->id,$id),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -103,6 +110,7 @@ class RaceController extends \yii\web\Controller {
             'model' => $model,
             'user' => $user,
             'featProvider' => $featProvider,
+            'subRaceProvider' => $subRaceProvider,
         ]);
     }
 

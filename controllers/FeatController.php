@@ -16,7 +16,7 @@ class FeatController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => Feat::getUserAvailableFeats(Yii::$app->user->id),
+            'query' => User::getUserAvailableFeats(Yii::$app->user->id),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -33,11 +33,13 @@ class FeatController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionCreate() {
+    public function actionCreate($race_id = null, $class_id = null) {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
         $model = new Feat();
+        $model->race_id = $race_id;
+        $model->class_id = $class_id;
         if ($attributes = Yii::$app->request->post('Feat')) {
             $model->setAttributes($attributes);
             $model->created_by_user_id = Yii::$app->user->id;

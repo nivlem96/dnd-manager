@@ -16,7 +16,7 @@ class CharacterClassController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => CharacterClass::getUserAvailableClasses(Yii::$app->user->id),
+            'query' => User::getUserAvailableClasses(Yii::$app->user->id),
             'pagination' => [
                 'pageSize' => 20,
             ],
