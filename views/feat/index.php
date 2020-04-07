@@ -12,7 +12,7 @@ $this->title = 'Feats';
 <h1><?= HTML::encode($this->title) ?></h1>
 
 <div class="race-wrapper">
-    <?= HTML::a('+ Add a new race', ['race/create']) ?>
+    <?= HTML::a('+ Add a new feat', ['feat/create']) ?>
 
     <?=
     GridView::widget([

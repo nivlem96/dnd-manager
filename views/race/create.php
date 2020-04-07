@@ -4,6 +4,7 @@
 
 /* @var $model app\models\Race */
 
+use app\models\Race;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
@@ -22,6 +23,10 @@ $this->title = 'Create race';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?php
+    $userId = Yii::$app->user->id;
+    $races = User::getUserAvailableRacesArray($userId);
+    echo $form->field($model,'parent_id')->dropDownList($races)->label('Parent');?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">

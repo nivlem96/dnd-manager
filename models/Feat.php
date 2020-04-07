@@ -62,10 +62,4 @@ class Feat extends \yii\db\ActiveRecord {
     public function getClass() {
         return $this->hasOne(CharacterClass::className(), ['id' => 'class_id']);
     }
-
-    public static function getUserAvailableFeats($id) {
-        return Feat::find()
-            ->where(['created_by_user_id' => $id])
-            ->orWhere(['created_by_user_id' => null]);
-    }
 }
