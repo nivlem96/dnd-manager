@@ -51,6 +51,20 @@ class CharacterController extends \yii\web\Controller {
                     ];
                     $this->saveClassRelation($classData);
                 }
+                $availableFeats = Character::getLevelUpFeats($id);
+                foreach ($availableFeats as $key => $feat) {
+                    $attributes = FeatRelation::find()->where(['character_id'=>$id])->andWhere(['feat_id'=>$feat->id])->all();
+                    if(empty($attributes)) {
+                        $featRelation = new FeatRelation();
+                        $featRelation->feat_id = $feat->id;
+                        $featRelation->character_id = $id;
+                        $featRelation->class_id = $feat->class_id;
+                        $featRelation->race_id = $feat->race_id;
+                        $featRelation->save();
+                    } else {
+                        unset($availableFeats[$key]);
+                    }
+                }
                 return $this->goBack(['/character/view', 'id' => $id]);
             } else {
                 var_dump($model->getErrors());
