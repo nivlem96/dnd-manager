@@ -15,6 +15,12 @@ use yii\base\InvalidConfigException;
  * @property int           $player_id
  * @property int|null      $campaign_id
  * @property int           $level
+ * @property int           $strength
+ * @property int           $dexterity
+ * @property int           $constitution
+ * @property int           $intelligence
+ * @property int           $wisdom
+ * @property int           $charisma
  *
  * @property Campaign      $campaign
  * @property User          $player
@@ -34,8 +40,8 @@ class Character extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name', 'race_id', 'player_id'], 'required'],
-            [['race_id', 'player_id', 'campaign_id', 'level'], 'integer'],
+            [['name', 'race_id', 'player_id', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], 'required'],
+            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], 'integer'],
             [['background'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
@@ -97,5 +103,9 @@ class Character extends \yii\db\ActiveRecord {
      */
     public function getFeatRelation() {
         return $this->hasMany(FeatRelation::className(), ['character_id' => 'id']);
+    }
+
+    public function getStatModifier($value) {
+        return floor($value / 2) - 5;
     }
 }
