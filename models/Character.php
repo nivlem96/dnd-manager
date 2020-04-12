@@ -108,4 +108,20 @@ class Character extends \yii\db\ActiveRecord {
     public function getStatModifier($value) {
         return floor($value / 2) - 5;
     }
+
+    public static function getLevelUpFeats($characterId) {
+        $character = Character::findone($characterId);
+        $feats = [];
+        foreach ($character->getClassRelation()->all() as $class) {
+            $classFeats = Feat::find()->where(['class_id' => $class->class_id])->andWhere(['unlocked_at' => $class->level])->all();
+            foreach ($classFeats as $feat) {
+                $feats[] = $feat;
+            }
+        }
+        $raceFeats = Feat::find()->where(['race_id' => $character->race_id])->andWhere(['unlocked_at' => $character->level])->all();
+        foreach ($raceFeats as $feat) {
+            $feats[] = $feat;
+        }
+        return $feats;
+    }
 }
