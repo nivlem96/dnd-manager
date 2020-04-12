@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Character;
 use app\models\ClassRelation;
+use app\models\FeatRelation;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -106,12 +107,40 @@ class CharacterController extends \yii\web\Controller {
     }
 
     /**
+     * @param         $id
+     *
+     * @var Character $model
+     *
+     * @return string|Response
+     */
+    public function actionLevelUp($id) {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        if ($attributes = Yii::$app->request->post('ClassRelation')) {
+            $classData = [
+                'character_id' => $id,
+                'class_id' => $attributes['class_id'],
+            ];
+            $this->saveClassRelation($classData);
+            $this->goBack(['character/level-up-confirmation', 'id' => $id]);
+        }
+        $Character = new Character();
+        $user = User::findIdentity(Yii::$app->user->id);
+        $model = $Character->findOne($id);
+        return $this->render('level-up', [
+            'model' => $model,
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * @param $classId
      * @param $characterId
      *
      * @return string|Response
      */
-    public function actionLevelUp($classId, $characterId) {
+    public function actionLevelUpClass($classId, $characterId) {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -124,8 +153,46 @@ class CharacterController extends \yii\web\Controller {
             $relation->level = $relation->level + 1;
             $relation->save();
         }
-        $this->goBack(['character/view', 'id' => $characterId]);
+        $this->goBack(['character/level-up-confirmation', 'id' => $characterId]);
 
+    }
+
+    /**
+     * @param $classId
+     * @param $characterId
+     *
+     * @return string|Response
+     */
+    public function actionLevelUpConfirmation($id) {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        if ($attributes = Yii::$app->request->post('ClassRelation')) {
+            $this->goBack(['/character/view','id'=>$id]);
+        }else {
+            $Character = new Character();
+            $model = $Character->findOne($id);
+            $user = User::findIdentity(Yii::$app->user->id);
+            $availableFeats = Character::getLevelUpFeats($id);
+            foreach ($availableFeats as $key => $feat) {
+                $attributes = FeatRelation::find()->where(['character_id'=>$id])->andWhere(['feat_id'=>$feat->id])->all();
+                if(empty($attributes)) {
+                    $featRelation = new FeatRelation();
+                    $featRelation->feat_id = $feat->id;
+                    $featRelation->character_id = $id;
+                    $featRelation->class_id = $feat->class_id;
+                    $featRelation->race_id = $feat->race_id;
+                    $featRelation->save();
+                } else {
+                    unset($availableFeats[$key]);
+                }
+            }
+            return $this->render('level-up-confirmation', [
+                'model' => $model,
+                'user' => $user,
+                'availableFeats' => $availableFeats,
+            ]);
+        }
     }
 
     public function actionDelete($id) {
@@ -153,6 +220,7 @@ class CharacterController extends \yii\web\Controller {
         if ($relationModel->validate()) {
             $relationModel->save();
         }
+        return;
     }
 
 }

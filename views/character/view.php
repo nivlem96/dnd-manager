@@ -15,16 +15,19 @@ use app\models\User;
 
 $this->title = $model->name;
 ?>
-<h1><?= HTML::encode($this->title) . ' ' . $model->level?></h1>
+<h1><?= HTML::encode($this->title) . ' ('. $model->race->name . ') ' . $model->level ?></h1>
 
 <div class="campaign-wrapper">
     <?php if ($model->player_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
 		<div class="row">
-			<div class="col-md-6">
-                <?= Html::a('delete', ['/character/delete', 'id' => $model->id]) ?>
+			<div class="col-md-4">
+                <?= Html::a('Level up', ['/character/level-up', 'id' => $model->id]) ?>
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-4">
                 <?= Html::a('edit', ['/character/edit', 'id' => $model->id]) ?>
+			</div>
+			<div class="col-md-4">
+                <?= Html::a('delete', ['/character/delete', 'id' => $model->id]) ?>
 			</div>
 		</div>
     <?php endif; ?>
@@ -117,13 +120,6 @@ $this->title = $model->name;
             ],
             [
                 'attribute' => 'level',
-            ],
-            [
-                'label' => 'Level Up',
-                'value' => function ($model) {
-                    return Html::a('Level up', ['/character/level-up', 'classId' => $model->class->id,'characterId' => $model->id]);
-                },
-                'format' => 'raw',
             ],
         ],
     ]);
