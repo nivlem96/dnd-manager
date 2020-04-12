@@ -29,10 +29,70 @@ $this->title = $model->name;
 		</div>
     <?php endif; ?>
 	<div class="row">
-		<div class="col-1">
+		<div class="col-md-2">
+			<h4>Strength</h4>
+		</div>
+		<div class="col-md-2">
+			<h4>Dexterity</h4>
+		</div>
+		<div class="col-md-2">
+			<h4>Constitution</h4>
+		</div>
+		<div class="col-md-2">
+			<h4>Intelligence</h4>
+		</div>
+		<div class="col-md-2">
+			<h4>Wisdom</h4>
+		</div>
+		<div class="col-md-2">
+			<h4>Charisma</h4>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2">
+            <?= $model->strength ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->dexterity ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->constitution ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->intelligence ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->wisdom ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->charisma ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-2">
+            <?= $model->getStatModifier($model->strength) ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->getStatModifier($model->dexterity) ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->getStatModifier($model->constitution) ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->getStatModifier($model->intelligence) ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->getStatModifier($model->wisdom) ?>
+		</div>
+		<div class="col-md-2">
+            <?= $model->getStatModifier($model->charisma) ?>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-1">
 			<h4>Background</h4>
 		</div>
-		<div class="col-11">
+		<div class="col-md-11">
             <?= $model->background ?>
 		</div>
 	</div>
