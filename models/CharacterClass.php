@@ -10,6 +10,7 @@ use yii\base\InvalidConfigException;
  *
  * @property int         $id
  * @property string      $name
+ * @property int         $hitdice
  *
  * @property Character[] $characters
  * @property Npc[]       $npcs
@@ -28,8 +29,9 @@ class CharacterClass extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name'], 'required'],
+            [['name', 'hitdice'], 'required'],
             [['name'], 'string', 'max' => 255],
+            [['hitdice'], 'integer'],
         ];
     }
 
@@ -40,6 +42,7 @@ class CharacterClass extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'hitdice' => 'Hit Dice',
         ];
     }
 

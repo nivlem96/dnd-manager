@@ -32,6 +32,12 @@ $this->title = $model->name;
 		</div>
     <?php endif; ?>
 	<div class="row">
+		<div class="col-md-1">
+			Hitpoints:
+		</div>
+		<div class="col-md-1"><?= $model->current_hitpoints . '/' . $model->max_hitpoints ?></div>
+	</div>
+	<div class="row">
 		<div class="col-md-2">
 			<h4>Strength</h4>
 		</div>
