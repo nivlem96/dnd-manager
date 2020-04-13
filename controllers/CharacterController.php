@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Character;
+use app\models\CharacterClass;
 use app\models\ClassRelation;
 use app\models\FeatRelation;
 use app\models\User;
@@ -39,35 +40,25 @@ class CharacterController extends \yii\web\Controller {
         }
         $model = new Character();
         if ($attributes = Yii::$app->request->post('Character')) {
-            $attributes['campaign_id'] = $campaign_id;
-            $model->setAttributes($attributes);
-            if ($model->validate()) {
-                $model->save();
-                $id = Yii::$app->db->getLastInsertID();
-                if ($attributes = Yii::$app->request->post('ClassRelation')) {
+            if ($classAttributes = Yii::$app->request->post('ClassRelation')) {
+                $attributes['campaign_id'] = $campaign_id;
+                $model->setAttributes($attributes);
+                $class = CharacterClass::findOne($classAttributes['class_id']);
+                $model->max_hitpoints = $class->hitdice + $model->getStatModifier($model->constitution);
+                $model->current_hitpoints = $model->max_hitpoints;
+                if ($model->validate()) {
+                    $model->save();
+                    $id = Yii::$app->db->getLastInsertID();
                     $classData = [
                         'character_id' => $id,
-                        'class_id' => $attributes['class_id'],
+                        'class_id' => $classAttributes['class_id'],
                     ];
                     $this->saveClassRelation($classData);
+                    $this->saveFeatRelation($id);
+                    return $this->goBack(['/character/view', 'id' => $id]);
+                } else {
+                    var_dump($model->getErrors());
                 }
-                $availableFeats = Character::getLevelUpFeats($id);
-                foreach ($availableFeats as $key => $feat) {
-                    $attributes = FeatRelation::find()->where(['character_id'=>$id])->andWhere(['feat_id'=>$feat->id])->all();
-                    if(empty($attributes)) {
-                        $featRelation = new FeatRelation();
-                        $featRelation->feat_id = $feat->id;
-                        $featRelation->character_id = $id;
-                        $featRelation->class_id = $feat->class_id;
-                        $featRelation->race_id = $feat->race_id;
-                        $featRelation->save();
-                    } else {
-                        unset($availableFeats[$key]);
-                    }
-                }
-                return $this->goBack(['/character/view', 'id' => $id]);
-            } else {
-                var_dump($model->getErrors());
             }
         }
         return $this->render('create', [
@@ -137,7 +128,7 @@ class CharacterController extends \yii\web\Controller {
                 'class_id' => $attributes['class_id'],
             ];
             $this->saveClassRelation($classData);
-            $this->goBack(['character/level-up-confirmation', 'id' => $id]);
+            $this->goBack(['character/level-up-confirmation', 'characterId' => $id, 'classId' => $attributes['class_id']]);
         }
         $Character = new Character();
         $user = User::findIdentity(Yii::$app->user->id);
@@ -167,7 +158,7 @@ class CharacterController extends \yii\web\Controller {
             $relation->level = $relation->level + 1;
             $relation->save();
         }
-        $this->goBack(['character/level-up-confirmation', 'id' => $characterId]);
+        $this->goBack(['character/level-up-confirmation', 'characterId' => $characterId, 'classId' => $classId]);
 
     }
 
@@ -177,32 +168,26 @@ class CharacterController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionLevelUpConfirmation($id) {
+    public function actionLevelUpConfirmation($characterId, $classId) {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        if ($attributes = Yii::$app->request->post('ClassRelation')) {
-            $this->goBack(['/character/view','id'=>$id]);
-        }else {
-            $Character = new Character();
-            $model = $Character->findOne($id);
+        $Character = Character::findOne($characterId);
+        if ($attributes = Yii::$app->request->post('Character')) {
+            $addNumber = $attributes['dice'] + $Character->getStatModifier($Character->constitution) > 1 ? $attributes['dice'] + $Character->getStatModifier($Character->constitution) : 1;
+            $Character->max_hitpoints += $addNumber;
+            $Character->current_hitpoints += $addNumber;
+            $Character->save();
+            $this->goBack(['/character/view', 'id' => $characterId]);
+        } else {
+            $classRelation = $Character->getClassRelation()->where(['class_id'=>$classId])->one();
+            $class = $classRelation->class;
+            $model = $Character->findOne($characterId);
             $user = User::findIdentity(Yii::$app->user->id);
-            $availableFeats = Character::getLevelUpFeats($id);
-            foreach ($availableFeats as $key => $feat) {
-                $attributes = FeatRelation::find()->where(['character_id'=>$id])->andWhere(['feat_id'=>$feat->id])->all();
-                if(empty($attributes)) {
-                    $featRelation = new FeatRelation();
-                    $featRelation->feat_id = $feat->id;
-                    $featRelation->character_id = $id;
-                    $featRelation->class_id = $feat->class_id;
-                    $featRelation->race_id = $feat->race_id;
-                    $featRelation->save();
-                } else {
-                    unset($availableFeats[$key]);
-                }
-            }
+            $availableFeats = $this->saveFeatRelation($characterId);
             return $this->render('level-up-confirmation', [
                 'model' => $model,
+                'class' => $class,
                 'user' => $user,
                 'availableFeats' => $availableFeats,
             ]);
@@ -235,6 +220,24 @@ class CharacterController extends \yii\web\Controller {
             $relationModel->save();
         }
         return;
+    }
+
+    private function saveFeatRelation($characterId) {
+        $availableFeats = Character::getLevelUpFeats($characterId);
+        foreach ($availableFeats as $key => $feat) {
+            $attributes = FeatRelation::find()->where(['character_id' => $characterId])->andWhere(['feat_id' => $feat->id])->all();
+            if (empty($attributes)) {
+                $featRelation = new FeatRelation();
+                $featRelation->feat_id = $feat->id;
+                $featRelation->character_id = $characterId;
+                $featRelation->class_id = $feat->class_id;
+                $featRelation->race_id = $feat->race_id;
+                $featRelation->save();
+            } else {
+                unset($availableFeats[$key]);
+            }
+        }
+        return $availableFeats;
     }
 
 }

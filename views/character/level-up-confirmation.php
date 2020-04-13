@@ -3,6 +3,7 @@
 /* @var $form yii\bootstrap\ActiveForm */
 
 /* @var $model app\models\Character */
+/* @var $class app\models\CharacterClass */
 /* @var $availableFeats */
 
 use app\models\Race;
@@ -34,6 +35,7 @@ $this->title = 'Pick your feats';
             'labelOptions' => ['class' => 'col-lg-1 control-label'],
         ],
     ]); ?>
+	<?= $form->field($model,'dice')->input('number',['min'=>1,'max'=>$class->hitdice])->label('Hitdice(D' . $class->hitdice . ') uitkomst') ?>
 
 
 

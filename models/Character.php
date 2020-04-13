@@ -21,6 +21,8 @@ use yii\base\InvalidConfigException;
  * @property int           $intelligence
  * @property int           $wisdom
  * @property int           $charisma
+ * @property int           $max_hitpoints
+ * @property int           $current_hitpoints
  *
  * @property Campaign      $campaign
  * @property User          $player
@@ -28,6 +30,8 @@ use yii\base\InvalidConfigException;
  * @property FeatRelation  $featRelation
  */
 class Character extends \yii\db\ActiveRecord {
+    public $dice;
+
     /**
      * {@inheritdoc}
      */
@@ -40,8 +44,8 @@ class Character extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name', 'race_id', 'player_id', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], 'required'],
-            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'], 'integer'],
+            [['name', 'race_id', 'player_id', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints'], 'required'],
+            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints'], 'integer'],
             [['background'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
