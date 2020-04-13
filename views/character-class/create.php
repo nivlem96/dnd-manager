@@ -22,6 +22,7 @@ $this->title = 'Create campaign';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'hitdice')->input('number') ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">

@@ -68,7 +68,7 @@ class CharacterClassController extends \yii\web\Controller {
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/CharacterClass/view', 'id' => $id]);
+                return $this->goBack(['/character-class/view', 'id' => $id]);
             } else {
                 var_dump($model->getErrors());
             }
@@ -112,7 +112,7 @@ class CharacterClassController extends \yii\web\Controller {
         } catch (StaleObjectException $e) {
         } catch (\Throwable $e) {
         }
-        return $this->goBack(['/CharacterClass']);
+        return $this->goBack(['/character-class']);
     }
 
 }
