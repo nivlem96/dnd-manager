@@ -2,21 +2,21 @@
 
 namespace app\controllers;
 
-use app\models\Item;
+use app\models\Inventory;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\StaleObjectException;
 use yii\web\Response;
 
-class ItemController extends \yii\web\Controller {
+class InventoryController extends \yii\web\Controller {
     public function actionIndex() {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableItems(Yii::$app->user->id),
+            'query' => User::getUserAvailableInventorys(Yii::$app->user->id),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -29,7 +29,7 @@ class ItemController extends \yii\web\Controller {
 
     /**
      * @var User $User
-     * @var Item $model
+     * @var Inventory $model
      *
      * @return string|Response
      */
@@ -37,13 +37,13 @@ class ItemController extends \yii\web\Controller {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $model = new Item();
-        if ($attributes = Yii::$app->request->post('Item')) {
+        $model = new Inventory();
+        if ($attributes = Yii::$app->request->post('Inventory')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/item']);
+                return $this->goBack(['/inventory']);
             } else {
                 var_dump($model->getErrors());
             }
@@ -55,7 +55,7 @@ class ItemController extends \yii\web\Controller {
 
     /**
      * @var User $User
-     * @var Item $model
+     * @var Inventory $model
      *
      * @return string|Response
      */
@@ -63,13 +63,13 @@ class ItemController extends \yii\web\Controller {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $model = Item::find()->where(['id'=>$id])->one();
-        if ($attributes = Yii::$app->request->post('Item')) {
+        $model = Inventory::find()->where(['id'=>$id])->one();
+        if ($attributes = Yii::$app->request->post('Inventory')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/item/view','id'=>$id]);
+                return $this->goBack(['/inventory/view','id'=>$id]);
             } else {
                 var_dump($model->getErrors());
             }
@@ -82,7 +82,7 @@ class ItemController extends \yii\web\Controller {
     /**
      * @param        $id
      *
-     * @var Item     $model
+     * @var Inventory     $model
      *
      * @return string|Response
      */
@@ -90,9 +90,9 @@ class ItemController extends \yii\web\Controller {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $Item = new Item();
+        $Inventory = new Inventory();
         $user = User::findIdentity(Yii::$app->user->id);
-        $model = $Item->findOne($id);
+        $model = $Inventory->findOne($id);
         return $this->render('view', [
             'model' => $model,
             'user' => $user,
@@ -100,13 +100,13 @@ class ItemController extends \yii\web\Controller {
     }
 
     public function actionDelete($id) {
-        $Item = new Item();
+        $Inventory = new Inventory();
         try {
-            $Item->findOne($id)->delete();
+            $Inventory->findOne($id)->delete();
         } catch (StaleObjectException $e) {
         } catch (\Throwable $e) {
         }
-        return $this->goBack(['/item']);
+        return $this->goBack(['/inventory']);
     }
 
 }
