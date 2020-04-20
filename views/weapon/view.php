@@ -3,7 +3,7 @@
  * @var $this  yii\web\View
  * @var $form  yii\bootstrap\ActiveForm
  *
- * @var $model app\models\Item
+ * @var $model app\models\Weapon
  * @var $user app\models\User
  **/
 
@@ -18,10 +18,10 @@ $this->title = $model->name;
     <?php if ($model->created_by_user_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
 		<div class="row">
 			<div class="col-md-6">
-                <?= Html::a('delete', ['/item/delete', 'id' => $model->id]) ?>
+                <?= Html::a('delete', ['/weapon/delete', 'id' => $model->id]) ?>
 			</div>
 			<div class="col-md-6">
-                <?= Html::a('edit', ['/item/edit', 'id' => $model->id]) ?>
+                <?= Html::a('edit', ['/weapon/edit', 'id' => $model->id]) ?>
 			</div>
 		</div>
     <?php endif; ?>

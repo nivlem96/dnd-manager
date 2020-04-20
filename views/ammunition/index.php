@@ -2,17 +2,17 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 
-/* @var $dataProvider app\models\Item */
+/* @var $dataProvider app\models\Ammunition */
 
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = 'Items';
+$this->title = 'Ammunitions';
 ?>
 <h1><?= HTML::encode($this->title) ?></h1>
 
-<div class="item-wrapper">
-    <?= HTML::a('+ Add a new item', ['item/create']) ?>
+<div class="ammunition-wrapper">
+    <?= HTML::a('+ Add a new ammunition', ['ammunition/create']) ?>
 
     <?=
     GridView::widget([
@@ -21,7 +21,7 @@ $this->title = 'Items';
             [
                 'attribute' => 'name',
                 'value' => function ($model) {
-                    return Html::a($model->name, ['/item/view', 'id' => $model->id]);
+                    return Html::a($model->name, ['/ammunition/view', 'id' => $model->id]);
                 },
                 'format' => 'raw',
             ],

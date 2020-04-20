@@ -158,6 +158,30 @@ class User extends ActiveRecord implements IdentityInterface {
             ->orWhere(['created_by_user_id' => null]);
     }
 
+    public static function getUserAvailableAmmunitions($id) {
+        return Ammunition::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableArmors($id) {
+        return Armor::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableItems($id) {
+        return Item::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
+    public static function getUserAvailableWeapons($id) {
+        return Weapon::find()
+            ->where(['created_by_user_id' => $id])
+            ->orWhere(['created_by_user_id' => null]);
+    }
+
     public static function getUserAvailableClassesArray($id) {
         $classes = CharacterClass::find()
             ->where(['created_by_user_id' => $id])
