@@ -2,12 +2,12 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 
-/* @var $model app\models\Item */
+/* @var $model app\models\Armor */
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = 'Create item';
+$this->title = 'Create armor';
 ?>
 <h1><?= HTML::encode($this->title) ?></h1>
 

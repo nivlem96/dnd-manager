@@ -5,28 +5,31 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "item".
+ * This is the model class for table "weapon".
  *
  * @property int $id
  * @property string $name
- * @property string|null $created_at
- * @property string|null $updated_at
  * @property string|null $description
  * @property string|null $type
  * @property string|null $cost
  * @property float|null $weight
+ * @property string $damage_die
+ * @property string|null $damage_type
+ * @property string|null $properties
+ * @property string|null $created_at
+ * @property string|null $updated_at
  * @property int|null $created_by_user_id
  *
  * @property User $createdByUser
  */
-class Item extends \yii\db\ActiveRecord
+class Weapon extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'item';
+        return 'weapon';
     }
 
     /**
@@ -36,10 +39,10 @@ class Item extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['created_at', 'updated_at'], 'safe'],
             [['weight'], 'number'],
+            [['created_at', 'updated_at'], 'safe'],
             [['created_by_user_id'], 'integer'],
-            [['name', 'description', 'type', 'cost'], 'string', 'max' => 255],
+            [['name', 'description', 'type', 'cost', 'damage_die', 'damage_type', 'properties'], 'string', 'max' => 255],
             [['created_by_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by_user_id' => 'id']],
         ];
     }
@@ -52,12 +55,15 @@ class Item extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
             'description' => 'Description',
             'type' => 'Type',
             'cost' => 'Cost',
             'weight' => 'Weight',
+            'damage_die' => 'Damage Die',
+            'damage_type' => 'Damage Type',
+            'properties' => 'Properties',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
             'created_by_user_id' => 'Created By User ID',
         ];
     }

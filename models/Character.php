@@ -109,6 +109,13 @@ class Character extends \yii\db\ActiveRecord {
         return $this->hasMany(FeatRelation::className(), ['character_id' => 'id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInventory() {
+        return $this->hasMany(Inventory::className(), ['character_id' => 'id']);
+    }
+
     public function getStatModifier($value) {
         return floor($value / 2) - 5;
     }
