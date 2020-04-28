@@ -16,8 +16,10 @@ use Yii;
  * @property string|null $cost
  * @property float|null $weight
  * @property int|null $created_by_user_id
+ * @property int|null $proficiency_id
  *
  * @property User $createdByUser
+ * @property Proficiency $proficiency
  */
 class Item extends \yii\db\ActiveRecord
 {
@@ -38,9 +40,10 @@ class Item extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['weight'], 'number'],
-            [['created_by_user_id'], 'integer'],
+            [['created_by_user_id', 'proficiency_id'], 'integer'],
             [['name', 'description', 'type', 'cost'], 'string', 'max' => 255],
             [['created_by_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by_user_id' => 'id']],
+            [['proficiency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Proficiency::className(), 'targetAttribute' => ['proficiency_id' => 'id']],
         ];
     }
 
@@ -59,6 +62,7 @@ class Item extends \yii\db\ActiveRecord
             'cost' => 'Cost',
             'weight' => 'Weight',
             'created_by_user_id' => 'Created By User ID',
+            'proficiency_id' => 'Proficiency ID',
         ];
     }
 
@@ -70,5 +74,15 @@ class Item extends \yii\db\ActiveRecord
     public function getCreatedByUser()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by_user_id']);
+    }
+
+    /**
+     * Gets query for [[Proficiency]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProficiency()
+    {
+        return $this->hasOne(Proficiency::className(), ['id' => 'proficiency_id']);
     }
 }

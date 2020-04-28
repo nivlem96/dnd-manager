@@ -21,8 +21,10 @@ use Yii;
  * @property string|null $created_at
  * @property string|null $updated_at
  * @property int|null $created_by_user_id
+ * @property int|null $proficiency_id
  *
  * @property User $createdByUser
+ * @property Proficiency $proficiency
  */
 class Armor extends \yii\db\ActiveRecord
 {
@@ -42,10 +44,11 @@ class Armor extends \yii\db\ActiveRecord
         return [
             [['name', 'armor_class'], 'required'],
             [['weight'], 'number'],
-            [['armor_class', 'armor_class_modifier_max', 'strength_requirement', 'stealth_disandvantage', 'created_by_user_id'], 'integer'],
+            [['armor_class', 'armor_class_modifier_max', 'strength_requirement', 'stealth_disandvantage', 'created_by_user_id', 'proficiency_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'description', 'type', 'cost', 'armor_class_modifier'], 'string', 'max' => 255],
             [['created_by_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by_user_id' => 'id']],
+            [['proficiency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Proficiency::className(), 'targetAttribute' => ['proficiency_id' => 'id']],
         ];
     }
 
@@ -69,6 +72,7 @@ class Armor extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by_user_id' => 'Created By User ID',
+            'proficiency_id' => 'Proficiency ID',
         ];
     }
 
@@ -80,5 +84,15 @@ class Armor extends \yii\db\ActiveRecord
     public function getCreatedByUser()
     {
         return $this->hasOne(User::className(), ['id' => 'created_by_user_id']);
+    }
+
+    /**
+     * Gets query for [[Proficiency]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProficiency()
+    {
+        return $this->hasOne(Proficiency::className(), ['id' => 'proficiency_id']);
     }
 }

@@ -3,35 +3,40 @@
 namespace app\models;
 
 use Yii;
-use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "character".
  *
- * @property int           $id
- * @property string        $name
- * @property int           $race_id
- * @property string|null   $background
- * @property int           $player_id
- * @property int|null      $campaign_id
- * @property int           $level
- * @property int           $strength
- * @property int           $dexterity
- * @property int           $constitution
- * @property int           $intelligence
- * @property int           $wisdom
- * @property int           $charisma
- * @property int           $max_hitpoints
- * @property int           $current_hitpoints
+ * @property int                            $id
+ * @property string                         $name
+ * @property string|null                    $background
+ * @property int|null                       $race_id
+ * @property int|null                       $player_id
+ * @property int|null                       $campaign_id
+ * @property string|null                    $created_at
+ * @property string|null                    $updated_at
+ * @property int|null                       $level
+ * @property int                            $strength
+ * @property int                            $dexterity
+ * @property int                            $constitution
+ * @property int                            $intelligence
+ * @property int                            $wisdom
+ * @property int                            $charisma
+ * @property int                            $max_hitpoints
+ * @property int                            $current_hitpoints
+ * @property int                            $proficiency
  *
- * @property Campaign      $campaign
- * @property User          $player
- * @property ClassRelation $classRelation
- * @property FeatRelation  $featRelation
+ * @property Campaign                       $campaign
+ * @property Race                           $race
+ * @property User                           $player
+ * @property CharacterProficiencyRelation[] $characterProficiencyRelations
+ * @property ClassRelation[]                $classRelations
+ * @property FeatRelation[]                 $featRelations
+ * @property Inventory[]                    $inventories
+ * @property LanguageRelation[]             $languageRelations
+ * @property SkillRelation[]                $skillRelations
  */
 class Character extends \yii\db\ActiveRecord {
-    public $dice;
-
     /**
      * {@inheritdoc}
      */
@@ -44,11 +49,13 @@ class Character extends \yii\db\ActiveRecord {
      */
     public function rules() {
         return [
-            [['name', 'race_id', 'player_id', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints'], 'required'],
-            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints'], 'integer'],
+            [['name'], 'required'],
             [['background'], 'string'],
+            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints', 'proficiency'], 'integer'],
+            [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
+            [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::className(), 'targetAttribute' => ['race_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['player_id' => 'id']],
         ];
     }
@@ -60,11 +67,22 @@ class Character extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'level' => 'Level',
-            'race_id' => 'Race ID',
             'background' => 'Background',
+            'race_id' => 'Race ID',
             'player_id' => 'Player ID',
             'campaign_id' => 'Campaign ID',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'level' => 'Level',
+            'strength' => 'Strength',
+            'dexterity' => 'Dexterity',
+            'constitution' => 'Constitution',
+            'intelligence' => 'Intelligence',
+            'wisdom' => 'Wisdom',
+            'charisma' => 'Charisma',
+            'max_hitpoints' => 'Max Hitpoints',
+            'current_hitpoints' => 'Current Hitpoints',
+            'proficiency' => 'Proficiency',
         ];
     }
 
@@ -96,10 +114,48 @@ class Character extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Gets query for [[CharacterProficiencyRelations]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getClassRelation() {
+    public function getCharacterProficiencyRelations() {
+        return $this->hasMany(CharacterProficiencyRelation::className(), ['character_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ClassRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClassRelations() {
         return $this->hasMany(ClassRelation::className(), ['character_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[FeatRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFeatRelations() {
+        return $this->hasMany(FeatRelation::className(), ['character_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Inventories]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInventories() {
+        return $this->hasMany(Inventory::className(), ['character_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[LanguageRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLanguageRelations() {
+        return $this->hasMany(LanguageRelation::className(), ['character_id' => 'id']);
     }
 
     /**
@@ -109,13 +165,6 @@ class Character extends \yii\db\ActiveRecord {
         return $this->hasMany(FeatRelation::className(), ['character_id' => 'id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getInventory() {
-        return $this->hasMany(Inventory::className(), ['character_id' => 'id']);
-    }
-
     public function getStatModifier($value) {
         return floor($value / 2) - 5;
     }
@@ -123,7 +172,7 @@ class Character extends \yii\db\ActiveRecord {
     public static function getLevelUpFeats($characterId) {
         $character = Character::findone($characterId);
         $feats = [];
-        foreach ($character->getClassRelation()->all() as $class) {
+        foreach ($character->getClassRelations()->all() as $class) {
             $classFeats = Feat::find()->where(['class_id' => $class->class_id])->andWhere(['unlocked_at' => $class->level])->all();
             foreach ($classFeats as $feat) {
                 $feats[] = $feat;
