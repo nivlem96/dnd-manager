@@ -55,7 +55,8 @@ AppAsset::register($this);
                 ['label' => 'Items', 'url' => ['/item']],
                 ['label' => 'Weapons', 'url' => ['/weapon']],
                 ['label' => 'Armor', 'url' => ['/armor']],
-                ['label' => 'Ammunition', 'url' => ['/ammunition']],
+                ['label' => 'Skills', 'url' => ['/skill']],
+                ['label' => 'Ammunitions', 'url' => ['/ammunition']],
             ],
         ];
         $items[] = ['label' => Yii::$app->user->identity->username, 'url' => ['/user/home']];

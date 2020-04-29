@@ -16,7 +16,7 @@ class BackgroundController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableBackgrounds(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Background::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],

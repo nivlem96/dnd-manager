@@ -8,11 +8,14 @@ use Yii;
  * This is the model class for table "skill".
  *
  * @property int $id
- * @property string|null $name
+ * @property string $name
  * @property string|null $created_at
  * @property string|null $updated_at
+ * @property int|null $created_by_user_id
+ * @property string $stat
  *
  * @property DefaultSkill[] $defaultSkills
+ * @property User $createdByUser
  * @property SkillRelation[] $skillRelations
  */
 class Skill extends \yii\db\ActiveRecord
@@ -31,8 +34,11 @@ class Skill extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'string'],
+            [['name', 'stat'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
+            [['created_by_user_id'], 'integer'],
+            [['name', 'stat'], 'string', 'max' => 255],
+            [['created_by_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by_user_id' => 'id']],
         ];
     }
 
@@ -46,6 +52,8 @@ class Skill extends \yii\db\ActiveRecord
             'name' => 'Name',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'created_by_user_id' => 'Created By User ID',
+            'stat' => 'Stat',
         ];
     }
 
@@ -57,6 +65,16 @@ class Skill extends \yii\db\ActiveRecord
     public function getDefaultSkills()
     {
         return $this->hasMany(DefaultSkill::className(), ['skill_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[CreatedByUser]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedByUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by_user_id']);
     }
 
     /**

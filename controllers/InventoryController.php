@@ -15,14 +15,7 @@ class InventoryController extends \yii\web\Controller {
             return $this->goHome();
         }
         $user = User::findIdentity(Yii::$app->user->id);
-        $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableInventorys(Yii::$app->user->id),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
             'user' => $user,
         ]);
     }
@@ -39,7 +32,6 @@ class InventoryController extends \yii\web\Controller {
         }
         $model = new Inventory();
         if ($attributes = Yii::$app->request->post('Inventory')) {
-            $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();

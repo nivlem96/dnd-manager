@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\models\CharacterClass;
+use app\models\DefaultSkill;
+use app\models\SkillRelation;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -16,7 +18,7 @@ class CharacterClassController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableClasses(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id, CharacterClass::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -33,41 +35,30 @@ class CharacterClassController extends \yii\web\Controller {
      *
      * @return string|Response
      */
-    public function actionCreate() {
+    public function actionEdit($id = null) {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $model = new CharacterClass();
-        if ($attributes = Yii::$app->request->post('CharacterClass')) {
-            $model->setAttributes($attributes);
-            if ($model->validate()) {
-                $model->save();
-                return $this->goBack(['/character-class']);
-            } else {
-                var_dump($model->getErrors());
-            }
+        if (isset($id)) {
+            $model = CharacterClass::find()->where(['id' => $id])->one();
+        } else {
+            $model = new CharacterClass();
         }
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * @var User           $User
-     * @var CharacterClass $model
-     *
-     * @return string|Response
-     */
-    public function actionEdit($id) {
-        if (Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-        $model = CharacterClass::find()->where(['id' => $id])->one();
         if ($attributes = Yii::$app->request->post('CharacterClass')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
+                if (empty($id)) {
+                    $id = Yii::$app->db->getLastInsertID();
+                }
+                DefaultSkill::deleteAll(['class_id'=>$id]);
+                foreach ($attributes['skills_to_choose'] as $skillId) {
+                    $SkillRelation = new DefaultSkill();
+                    $SkillRelation->skill_id = $skillId;
+                    $SkillRelation->class_id = $id;
+                    $SkillRelation->save();
+                }
                 return $this->goBack(['/character-class/view', 'id' => $id]);
             } else {
                 var_dump($model->getErrors());
@@ -75,6 +66,7 @@ class CharacterClassController extends \yii\web\Controller {
         }
         return $this->render('create', [
             'model' => $model,
+            'user' => Yii::$app->user,
         ]);
     }
 

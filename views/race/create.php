@@ -26,7 +26,7 @@ $this->title = 'Create race';
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
     <?php
     $userId = Yii::$app->user->id;
-    $races = User::getUserAvailableRacesArray($userId);
+    $races = User::getUserAvailableClassArray($userId,Race::className());
     echo $form->field($model,'parent_id')->dropDownList($races)->label('Parent');?>
     <?= $form->field($model, 'description')->textarea() ?>
     <?= $form->field($model, 'speed')->input('number',['min'=>5,'step'=>5]) ?>

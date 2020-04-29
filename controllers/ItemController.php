@@ -16,7 +16,7 @@ class ItemController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableItems(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Item::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],

@@ -16,7 +16,7 @@ class RaceController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableRaces(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Race::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -43,6 +43,24 @@ class RaceController extends \yii\web\Controller {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
+                if(empty($model->ability_score_strength)) {
+                    $model->ability_score_strength = 0;
+                }
+                if(empty($model->ability_score_dexterity)) {
+                    $model->ability_score_dexterity = 0;
+                }
+                if(empty($model->ability_score_constitution)) {
+                    $model->ability_score_constitution = 0;
+                }
+                if(empty($model->ability_score_intelligence)) {
+                    $model->ability_score_intelligence = 0;
+                }
+                if(empty($model->ability_score_wisdom)) {
+                    $model->ability_score_wisdom = 0;
+                }
+                if(empty($model->ability_score_charisma)) {
+                    $model->ability_score_charisma = 0;
+                }
                 $model->save();
                 return $this->goBack(['/race']);
             } else {

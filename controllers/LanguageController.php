@@ -16,7 +16,7 @@ class LanguageController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableLanguages(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Language::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],

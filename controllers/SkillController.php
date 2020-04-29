@@ -16,7 +16,7 @@ class SkillController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableSkills(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Skill::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],

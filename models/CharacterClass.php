@@ -32,6 +32,7 @@ use Yii;
  */
 class CharacterClass extends \yii\db\ActiveRecord
 {
+    public $skills_to_choose;
     /**
      * {@inheritdoc}
      */
@@ -73,6 +74,19 @@ class CharacterClass extends \yii\db\ActiveRecord
             'parent_id' => 'Parent ID',
         ];
     }
+    public function afterFind ( ) {
+        if(is_string($this->saving_throws)) {
+            $this->saving_throws = json_decode($this->saving_throws,true);
+        }
+        if(!empty($defaultSkills = $this->getDefaultSkills()->all())) {
+            $result = [];
+            foreach ($defaultSkills as $skill) {
+                $result[] = $skill->skill_id;
+            }
+            $this->skills_to_choose = $result;
+        }
+}
+
 
     /**
      * Gets query for [[Parent]].

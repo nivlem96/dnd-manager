@@ -31,7 +31,7 @@ $this->title = 'Level up character';
 ]); ?>
 <?php
 $userId = Yii::$app->user->id;
-$classes = User::getUserAvailableClassesArray($userId);
+$classes = User::getUserAvailableClassArray($userId,CharacterClass::className())($userId);
 $dataProvider = new ActiveDataProvider([
     'query' => $model->getClassRelation(),
     'pagination' => [

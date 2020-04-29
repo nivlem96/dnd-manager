@@ -12,7 +12,7 @@ $this->title = 'Classes';
 <h1><?= HTML::encode($this->title) ?></h1>
 
 <div class="class-wrapper">
-    <?= HTML::a('+ Add a new class', ['character-class/create']) ?>
+    <?= HTML::a('+ Add a new class', ['character-class/edit']) ?>
 
     <?=
     GridView::widget([

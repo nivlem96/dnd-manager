@@ -3,6 +3,7 @@
 /* @var $form yii\bootstrap\ActiveForm */
 
 /* @var $model app\models\CharacterClass */
+/* @var $user app\models\User */
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
@@ -23,6 +24,15 @@ $this->title = 'Create campaign';
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'hitdice')->input('number') ?>
+    <?= $form->field($model, 'skill_choices')->input('number') ?>
+    <?= $form->field($model, 'skills_to_choose')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Skill::className(),false))->label('Skills') ?>
+    <?= $form->field($model, 'saving_throws')->checkboxList([
+        'strength' => 'Strength',
+        'dexterity' => 'Dexterity',
+        'constitution' => 'Constitution',
+        'intelligence' => 'Intelligence',
+        'wisdom' => 'Wisdom',
+        'charisma' => 'Charisma']) ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">

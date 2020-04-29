@@ -16,7 +16,7 @@ class ArmorController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableArmors(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Armor::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],

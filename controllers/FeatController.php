@@ -16,7 +16,7 @@ class FeatController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableFeats(Yii::$app->user->id),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id,Feat::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],

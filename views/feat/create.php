@@ -4,6 +4,8 @@
 
 /* @var $model app\models\Feat */
 
+use app\models\Race;
+use app\models\CharacterClass;
 use app\models\User;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
@@ -24,8 +26,8 @@ $this->title = 'Create feat';
     ]);
 
     $userId = Yii::$app->user->id;
-    $races = User::getUserAvailableRacesArray($userId);
-    $classes = User::getUserAvailableClassesArray($userId);
+    $races = User::getUserAvailableClassArray($userId,Race::className());
+    $classes = User::getUserAvailableClassArray($userId,CharacterClass::className());
     echo $form->field($model, 'name')->textInput(['autofocus' => true]);
     echo $form->field($model, 'unlocked_at')->input('number', ['min' => 1]);
     echo $form->field($model, 'race_id')->dropDownList($races)->label('Race');

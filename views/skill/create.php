@@ -22,6 +22,13 @@ $this->title = 'Create skill';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'stat')->radioList([
+        'strength' => 'Strength',
+        'dexterity' => 'Dexterity',
+        'constitution' => 'Constitution',
+        'intelligence' => 'Intelligence',
+        'wisdom' => 'Wisdom',
+        'charisma' => 'Charisma']) ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">
