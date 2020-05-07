@@ -15,7 +15,7 @@ use app\models\User;
 
 $this->title = $model->name;
 ?>
-<h1><?= HTML::encode($this->title) . ' ('. $model->race->name . ') ' . $model->level ?></h1>
+<h1><?= HTML::encode($this->title) . ' (' . $model->race->name . ') ' . $model->level ?></h1>
 
 <div class="campaign-wrapper">
     <?php if ($model->player_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
@@ -32,10 +32,33 @@ $this->title = $model->name;
 		</div>
     <?php endif; ?>
 	<div class="row">
-		<div class="col-md-1">
-			Hitpoints:
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="col-md-6">
+					Hitpoints:
+				</div>
+				<div class="col-md-6">
+                    <?= $model->current_hitpoints . '/' . $model->max_hitpoints ?>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="col-md-6">
+					Armor Class:
+				</div>
+				<div class="col-md-6">
+                    <?= $model->armor_class ?>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="col-md-6">
+					Speed:
+				</div>
+				<div class="col-md-6">
+                    <?= $model->speed ?>
+				</div>
+			</div>
 		</div>
-		<div class="col-md-1"><?= $model->current_hitpoints . '/' . $model->max_hitpoints ?></div>
 	</div>
 	<div class="row">
 		<div class="col-md-2">
@@ -79,22 +102,22 @@ $this->title = $model->name;
 	</div>
 	<div class="row">
 		<div class="col-md-2">
-            <?= $model->getStatModifier($model->strength) ?>
+            <?= $model->getStatModifier('strength') ?>
 		</div>
 		<div class="col-md-2">
-            <?= $model->getStatModifier($model->dexterity) ?>
+            <?= $model->getStatModifier('dexterity') ?>
 		</div>
 		<div class="col-md-2">
-            <?= $model->getStatModifier($model->constitution) ?>
+            <?= $model->getStatModifier('constitution') ?>
 		</div>
 		<div class="col-md-2">
-            <?= $model->getStatModifier($model->intelligence) ?>
+            <?= $model->getStatModifier('intelligence') ?>
 		</div>
 		<div class="col-md-2">
-            <?= $model->getStatModifier($model->wisdom) ?>
+            <?= $model->getStatModifier('wisdom') ?>
 		</div>
 		<div class="col-md-2">
-            <?= $model->getStatModifier($model->charisma) ?>
+            <?= $model->getStatModifier('charisma') ?>
 		</div>
 	</div>
 	<div class="row">
@@ -105,51 +128,120 @@ $this->title = $model->name;
             <?= $model->background ?>
 		</div>
 	</div>
-	<h3>Classes</h3>
-    <?php
-    $dataProvider = new ActiveDataProvider([
-        'query' => $model->getClassRelation(),
-        'pagination' => [
-            'pageSize' => 20,
-        ],
-    ]);
+	<div class="row">
+		<div class="col-md-4">
+			<h3>Classes</h3>
+            <?php
+            $dataProvider = new ActiveDataProvider([
+                'query' => $model->getClassRelations(),
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'name',
+                        'value' => function ($model) {
+                            return Html::a($model->class->name, ['/character-class/view', 'id' => $model->class->id]);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'level',
+                    ],
+                ],
+            ]);
+            ?>
+		</div>
+		<div class="col-md-4">
+			<h3>Feats</h3>
+            <?php
+            $dataProvider = new ActiveDataProvider([
+                'query' => $model->getFeatRelation(),
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'name',
+                        'value' => function ($model) {
+                            return Html::a($model->feat->name, ['/feat/view', 'id' => $model->feat->id]);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'counter',
+                    ],
+                    [
+                        'attribute' => 'counter_type',
+                    ],
+                ],
+            ]);
+            ?>
+		</div>
+		<div class="col-md-4">
+			<h3>Skills</h3>
+            <?php
+            $dataProvider = new ActiveDataProvider([
+                'query' => $model->getSkillRelation(),
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'name',
+                        'value' => function ($model) {
+                            return Html::a($model->skill->name, ['/skill/view', 'id' => $model->skill->id]);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'modifier',
+                        'value' => function ($model) {
+                            return $model->getModifier();
+                        },
+                    ],
+                ],
+            ]);
+            ?>
+		</div>
+	</div>
 
-    echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            [
-                'attribute' => 'name',
-                'value' => function ($model) {
-                    return Html::a($model->class->name, ['/character-class/view', 'id' => $model->class->id]);
-                },
-                'format' => 'raw',
-            ],
-            [
-                'attribute' => 'level',
-            ],
-        ],
-    ]);
-    ?>
-	<h3>Feats</h3>
-    <?php
-    $dataProvider = new ActiveDataProvider([
-        'query' => $model->getFeatRelation(),
-        'pagination' => [
-            'pageSize' => 20,
-        ],
-    ]);
+	<div class="row">
+		<div class="col-md-4">
+			<h3>Inventory</h3>
+            <?php
+            $dataProvider = new ActiveDataProvider([
+                'query' => $model->getInventories(),
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+            echo GridView::widget([
+                'dataProvider' => $dataProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'name',
+                        'value' => function ($model) {
+                            /**
+                             * @var \app\models\Inventory $model
+                             */
+                            return $model->getEquipment()->one()->name;
+                        },
+                        'format' => 'raw',
+                    ],
+                ],
+            ]);
+            ?>
+		</div>
+	</div>
 
-    echo GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            [
-                'attribute' => 'name',
-                'value' => function ($model) {
-                    return Html::a($model->feat->name, ['/feat/view', 'id' => $model->feat->id]);
-                },
-                'format' => 'raw',
-            ],
-        ],
-    ]);
-    ?>
 </div>

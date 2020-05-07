@@ -6,6 +6,9 @@ use app\models\Character;
 use app\models\CharacterClass;
 use app\models\ClassRelation;
 use app\models\FeatRelation;
+use app\models\Race;
+use app\models\Skill;
+use app\models\SkillRelation;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -44,8 +47,16 @@ class CharacterController extends \yii\web\Controller {
                 $attributes['campaign_id'] = $campaign_id;
                 $model->setAttributes($attributes);
                 $class = CharacterClass::findOne($classAttributes['class_id']);
-                $model->max_hitpoints = $class->hitdice + $model->getStatModifier($model->constitution);
+                $race = Race::findOne($attributes['race_id']);
+                $model->max_hitpoints = $class->hitdice + $model->getStatModifier('constitution');
                 $model->current_hitpoints = $model->max_hitpoints;
+                $model->speed = empty($race->speed) ? $race->parent->speed : $race->speed;
+                $model->strength += $race->ability_score_strength + $race->parent->ability_score_strength;
+                $model->dexterity += $race->ability_score_dexterity + $race->parent->ability_score_dexterity;
+                $model->constitution += $race->ability_score_constitution + $race->parent->ability_score_constitution;
+                $model->intelligence += $race->ability_score_intelligence + $race->parent->ability_score_intelligence;
+                $model->wisdom += $race->ability_score_wisdom + $race->parent->ability_score_wisdom;
+                $model->charisma += $race->ability_score_charisma + $race->parent->ability_score_charisma;
                 if ($model->validate()) {
                     $model->save();
                     $id = Yii::$app->db->getLastInsertID();
@@ -55,6 +66,7 @@ class CharacterController extends \yii\web\Controller {
                     ];
                     $this->saveClassRelation($classData);
                     $this->saveFeatRelation($id);
+                    $this->saveSkillRelation($id);
                     return $this->goBack(['/character/view', 'id' => $id]);
                 } else {
                     var_dump($model->getErrors());
@@ -153,7 +165,7 @@ class CharacterController extends \yii\web\Controller {
         $model = $Character->findOne($characterId);
         $model->level = $model->level + 1;
         $model->save();
-        $classRelation = $model->getClassRelation();
+        $classRelation = $model->getClassRelations();
         if ($relation = $classRelation->where(['=', 'class_id', $classId])->one()) {
             $relation->level = $relation->level + 1;
             $relation->save();
@@ -174,13 +186,13 @@ class CharacterController extends \yii\web\Controller {
         }
         $Character = Character::findOne($characterId);
         if ($attributes = Yii::$app->request->post('Character')) {
-            $addNumber = $attributes['dice'] + $Character->getStatModifier($Character->constitution) > 1 ? $attributes['dice'] + $Character->getStatModifier($Character->constitution) : 1;
+            $addNumber = $attributes['dice'] + $Character->getStatModifier('constitution') > 1 ? $attributes['dice'] + $Character->getStatModifier($Character->constitution) : 1;
             $Character->max_hitpoints += $addNumber;
             $Character->current_hitpoints += $addNumber;
             $Character->save();
             $this->goBack(['/character/view', 'id' => $characterId]);
         } else {
-            $classRelation = $Character->getClassRelation()->where(['class_id'=>$classId])->one();
+            $classRelation = $Character->getClassRelations()->where(['class_id'=>$classId])->one();
             $class = $classRelation->class;
             $model = $Character->findOne($characterId);
             $user = User::findIdentity(Yii::$app->user->id);
@@ -195,12 +207,12 @@ class CharacterController extends \yii\web\Controller {
     }
 
     public function actionDelete($id) {
-        $Character = new Character();
+        $Character = Character::findOne($id);
         try {
-            ClassRelation::deleteAll(['character_id' => $id]);
-            $Character->findOne($id)->delete();
-        } catch (StaleObjectException $e) {
+            Character::deleteRelations($id);
+            $Character->delete();
         } catch (\Throwable $e) {
+            var_dump($e);
         }
         return $this->goBack(['/character']);
     }
@@ -238,6 +250,22 @@ class CharacterController extends \yii\web\Controller {
             }
         }
         return $availableFeats;
+    }
+
+    private function saveSkillRelation($characterId) {
+        $availableSkills = User::getUserAvailableClass(Yii::$app->user->id,Skill::className())->all();
+        foreach ($availableSkills as $key => $skill) {
+            $attributes = SkillRelation::find()->where(['character_id' => $characterId])->andWhere(['skill_id' => $skill->id])->all();
+            if (empty($attributes)) {
+                $featRelation = new SkillRelation();
+                $featRelation->skill_id = $skill->id;
+                $featRelation->character_id = $characterId;
+                $featRelation->save();
+            } else {
+                unset($availableSkills[$key]);
+            }
+        }
+        return $availableSkills;
     }
 
 }

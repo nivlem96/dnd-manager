@@ -38,8 +38,6 @@ AppAsset::register($this);
     ]);
     $items = [
         ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {
         $items[] = ['label' => 'Register', 'url' => ['/user/register']];
@@ -59,7 +57,14 @@ AppAsset::register($this);
                 ['label' => 'Ammunitions', 'url' => ['/ammunition']],
             ],
         ];
-        $items[] = ['label' => Yii::$app->user->identity->username, 'url' => ['/user/home']];
+        $items[] = [
+            'label' => Yii::$app->user->identity->username,
+            'items' => [
+                ['label' => 'Profile', 'url' => ['/user/home']],
+                ['label' => 'Campaigns(' . count(Yii::$app->user->identity->campaigns) . ')', 'url' => ['/campaign']],
+                ['label' => 'Characters(' . count(Yii::$app->user->identity->characters) . ')', 'url' => ['/character']],
+            ],
+        ];
         $items[] = '<li>'
             . Html::beginForm(['/user/logout'], 'post')
             . Html::submitButton(

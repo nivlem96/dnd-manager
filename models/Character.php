@@ -25,6 +25,7 @@ use Yii;
  * @property int                            $max_hitpoints
  * @property int                            $current_hitpoints
  * @property int                            $proficiency
+ * @property int                            $speed
  *
  * @property Campaign                       $campaign
  * @property Race                           $race
@@ -35,8 +36,12 @@ use Yii;
  * @property Inventory[]                    $inventories
  * @property LanguageRelation[]             $languageRelations
  * @property SkillRelation[]                $skillRelations
+ *
+ * @property int                            $armor_class
  */
 class Character extends \yii\db\ActiveRecord {
+    public $armor_class;
+
     /**
      * {@inheritdoc}
      */
@@ -51,7 +56,7 @@ class Character extends \yii\db\ActiveRecord {
         return [
             [['name'], 'required'],
             [['background'], 'string'],
-            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints', 'proficiency'], 'integer'],
+            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints', 'proficiency', 'speed'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
@@ -83,6 +88,7 @@ class Character extends \yii\db\ActiveRecord {
             'max_hitpoints' => 'Max Hitpoints',
             'current_hitpoints' => 'Current Hitpoints',
             'proficiency' => 'Proficiency',
+            'speed' => 'Speed',
         ];
     }
 
@@ -165,7 +171,26 @@ class Character extends \yii\db\ActiveRecord {
         return $this->hasMany(FeatRelation::className(), ['character_id' => 'id']);
     }
 
-    public function getStatModifier($value) {
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSkillRelation() {
+        return $this->hasMany(SkillRelation::className(), ['character_id' => 'id']);
+    }
+
+    public function getStatValue($stat) {
+        $stat = strtolower($stat);
+        return $this->$stat;
+    }
+
+    /**
+     * @param $stat
+     *
+     * @return int
+     */
+    public function getStatModifier($stat) {
+        $stat = strtolower($stat);
+        $value = $this->getStatValue($stat);
         return floor($value / 2) - 5;
     }
 
@@ -178,10 +203,20 @@ class Character extends \yii\db\ActiveRecord {
                 $feats[] = $feat;
             }
         }
-        $raceFeats = Feat::find()->where(['race_id' => $character->race_id])->andWhere(['unlocked_at' => $character->level])->all();
+        $raceFeats = Feat::find()->where(['race_id' => $character->race_id])->orWhere(['race_id' => $character->race->parent_id])->andWhere(['unlocked_at' => $character->level])->all();
         foreach ($raceFeats as $feat) {
             $feats[] = $feat;
         }
         return $feats;
+    }
+
+    public static function deleteRelations($characterId) {
+        CharacterProficiencyRelation::deleteAll(['character_id' => $characterId]);
+        ClassRelation::deleteAll(['character_id' => $characterId]);
+        FeatRelation::deleteAll(['character_id' => $characterId]);
+        Inventory::deleteAll(['character_id' => $characterId]);
+        LanguageRelation::deleteAll(['character_id' => $characterId]);
+        FeatRelation::deleteAll(['character_id' => $characterId]);
+        SkillRelation::deleteAll(['character_id' => $characterId]);
     }
 }

@@ -61,6 +61,18 @@ class Inventory extends \yii\db\ActiveRecord
     }
 
     public function getEquipment(){
-        return $this->hasOne($this->equipment_table, ['id' => 'equipment_id']);
+        $className = strtolower($this->equipment_table);
+        switch ($className){
+            case 'weapon':
+                $class = Weapon::className();
+                break;
+            case 'armor':
+                $class = Armor::className();
+                break;
+            case 'item':
+                $class = Item::className();
+                break;
+        }
+        return $this->hasOne($class, ['id' => 'equipment_id']);
     }
 }

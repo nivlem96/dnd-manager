@@ -28,7 +28,7 @@ $this->title = 'Create character';
 	<?php
 	$userId = Yii::$app->user->id;
 	$races = User::getUserAvailableClassArray($userId,Race::className());
-    $classes = User::getUserAvailableClassArray($userId,CharacterClass::className())($userId);
+    $classes = User::getUserAvailableClassArray($userId,CharacterClass::className());
 	echo $form->field($model,'race_id')->dropDownList($races)->label('Race');?>
 	<div class="form-group field-character-race_id required has-success">
 		<label class="col-lg-1 control-label" for="class_relation-class_id">Class</label>

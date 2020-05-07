@@ -33,12 +33,12 @@ $this->title = 'Level up character';
 $userId = Yii::$app->user->id;
 $classes = User::getUserAvailableClassArray($userId,CharacterClass::className())($userId);
 $dataProvider = new ActiveDataProvider([
-    'query' => $model->getClassRelation(),
+    'query' => $model->getClassRelations(),
     'pagination' => [
         'pageSize' => 20,
     ],
 ]);
-$characterClasses = $model->getClassRelation()->all();
+$characterClasses = $model->getClassRelations()->all();
 foreach ($characterClasses as $class) {
 	unset($classes[$class->id]);
 }

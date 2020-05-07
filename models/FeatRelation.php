@@ -12,6 +12,10 @@ use Yii;
  * @property int $character_id
  * @property int|null $class_id
  * @property int|null $race_id
+ * @property int|null $counter
+ * @property int|null $counter_max
+ * @property string|null $counter_type
+ * @property string|null $damage
  *
  * @property Character $character
  * @property CharacterClass $class
@@ -35,7 +39,8 @@ class FeatRelation extends \yii\db\ActiveRecord
     {
         return [
             [['feat_id', 'character_id'], 'required'],
-            [['feat_id', 'character_id', 'class_id', 'race_id'], 'integer'],
+            [['feat_id', 'character_id', 'class_id', 'race_id', 'counter', 'counter_max'], 'integer'],
+            [['counter_type', 'damage'], 'string', 'max' => 255],
             [['character_id'], 'exist', 'skipOnError' => true, 'targetClass' => Character::className(), 'targetAttribute' => ['character_id' => 'id']],
             [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::className(), 'targetAttribute' => ['class_id' => 'id']],
             [['feat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Feat::className(), 'targetAttribute' => ['feat_id' => 'id']],
@@ -54,6 +59,10 @@ class FeatRelation extends \yii\db\ActiveRecord
             'character_id' => 'Character ID',
             'class_id' => 'Class ID',
             'race_id' => 'Race ID',
+            'counter' => 'Counter',
+            'counter_max' => 'Counter Max',
+            'counter_type' => 'Counter Type',
+            'damage' => 'Damage',
         ];
     }
 

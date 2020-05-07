@@ -16,7 +16,7 @@ class FeatController extends \yii\web\Controller {
         }
         $user = User::findIdentity(Yii::$app->user->id);
         $dataProvider = new ActiveDataProvider([
-            'query' => User::getUserAvailableClass(Yii::$app->user->id,Feat::className()),
+            'query' => User::getUserAvailableClass(Yii::$app->user->id, Feat::className()),
             'pagination' => [
                 'pageSize' => 20,
             ],
@@ -43,6 +43,8 @@ class FeatController extends \yii\web\Controller {
         if ($attributes = Yii::$app->request->post('Feat')) {
             $model->setAttributes($attributes);
             $model->created_by_user_id = Yii::$app->user->id;
+            $model->race_id = $attributes['race_id'] == 0 ? null : $attributes['race_id'];
+            $model->class_id = $attributes['class_id'] == 0 ? null : $attributes['class_id'];
             if ($model->validate()) {
                 $model->save();
                 return $this->goBack(['/feat']);
@@ -57,7 +59,6 @@ class FeatController extends \yii\web\Controller {
 
     /**
      * @var User $User
-     * @var Feat $model
      *
      * @return string|Response
      */
@@ -65,14 +66,19 @@ class FeatController extends \yii\web\Controller {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $model = Feat::find()->where(['id'=>$id])->one();
+        /**
+         * @var Feat $model
+         */
+        $model = Feat::find()->where(['id' => $id])->one();
         if ($attributes = Yii::$app->request->post('Feat')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             $model->created_by_user_id = Yii::$app->user->id;
+            $model->race_id = $attributes['race_id'] == 0 ? null : $attributes['race_id'];
+            $model->class_id = $attributes['class_id'] == 0 ? null : $attributes['class_id'];
             if ($model->validate()) {
                 $model->save();
-                return $this->goBack(['/feat/view','id'=>$id]);
+                return $this->goBack(['/feat/view', 'id' => $id]);
             } else {
                 var_dump($model->getErrors());
             }

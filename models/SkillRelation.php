@@ -10,12 +10,21 @@ use Yii;
  * @property int $id
  * @property int|null $skill_id
  * @property int|null $character_id
+ * @property int|null $proficient
  *
  * @property Character $character
  * @property Skill $skill
  */
 class SkillRelation extends \yii\db\ActiveRecord
 {
+    public $modifier;
+
+    public function init() {
+        if(!empty($this->id)) {
+            $this->modifier = $this->getModifier();
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -30,7 +39,7 @@ class SkillRelation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['skill_id', 'character_id'], 'integer'],
+            [['skill_id', 'character_id', 'proficient'], 'integer'],
             [['character_id'], 'exist', 'skipOnError' => true, 'targetClass' => Character::className(), 'targetAttribute' => ['character_id' => 'id']],
             [['skill_id'], 'exist', 'skipOnError' => true, 'targetClass' => Skill::className(), 'targetAttribute' => ['skill_id' => 'id']],
         ];
@@ -45,6 +54,7 @@ class SkillRelation extends \yii\db\ActiveRecord
             'id' => 'ID',
             'skill_id' => 'Skill ID',
             'character_id' => 'Character ID',
+            'proficient' => 'Proficient',
         ];
     }
 
@@ -66,5 +76,20 @@ class SkillRelation extends \yii\db\ActiveRecord
     public function getSkill()
     {
         return $this->hasOne(Skill::className(), ['id' => 'skill_id']);
+    }
+
+    /**
+     * Gets query for [[Skill]].
+     *
+     * @return int
+     */
+    public function getModifier()
+    {
+        $proficient = (bool)$this->proficient;
+        $modifier = $this->character->getStatModifier($this->skill->stat);
+        if($proficient) {
+            $modifier += $this->character->proficiency;
+        }
+        return $modifier;
     }
 }

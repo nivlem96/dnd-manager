@@ -17,7 +17,7 @@ $this->title = $model->name;
 	<div class="row">
 		<div class="col-md-6">
 			<div class="row">
-				<div class="col-12">
+				<div class="col-md-12">
 					<h3>Events</h3>
                     <?= HTML::a('+ Create new event', ['/event/create', 'id' => $model->id]) ?>
                     <?php
@@ -35,7 +35,7 @@ $this->title = $model->name;
 						</table>
                     <?php endif; ?>
 				</div>
-				<div class="col-12">
+				<div class="col-md-12">
 					<h3>Encounters</h3>
                     <?= HTML::a('+ Create new encounter', ['/encounter/create', 'campaign_id' => $model->id]) ?>
                     <?php
@@ -57,7 +57,7 @@ $this->title = $model->name;
 		</div>
 		<div class="col-md-6">
 			<div class="row">
-				<div class="col-12">
+				<div class="col-md-12">
 					<h3>Player characters</h3>
                     <?= HTML::a('+ Create new character', ['/character/create', 'campaign_id' => $model->id]) ?>
                     <?php
@@ -75,7 +75,7 @@ $this->title = $model->name;
 						</table>
                     <?php endif; ?>
 				</div>
-				<div class="col-12">
+				<div class="col-md-12">
 					<h3>NPC's</h3>
                     <?= HTML::a('+ Create new npc', ['/npc/create', 'id' => $model->id]) ?>
                     <?php
