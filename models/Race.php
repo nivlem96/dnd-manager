@@ -58,7 +58,6 @@ class Race extends \yii\db\ActiveRecord
             [['created_by_user_id', 'parent_id', 'speed', 'ability_score_strength', 'ability_score_dexterity', 'ability_score_constitution', 'ability_score_intelligence', 'ability_score_wisdom', 'ability_score_charisma', 'language_choice'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'size', 'age', 'alignment'], 'string', 'max' => 255],
-            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::className(), 'targetAttribute' => ['parent_id' => 'id']],
             [['created_by_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by_user_id' => 'id']],
         ];
     }

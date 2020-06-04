@@ -29,8 +29,8 @@ class Choice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['class_id'], 'integer'],
-            [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::className(), 'targetAttribute' => ['class_id' => 'id']],
+            [['relation_class'], 'string'],
+            [['relation_id'], 'integer'],
         ];
     }
 
@@ -41,18 +41,9 @@ class Choice extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'class_id' => 'Class ID',
+            'relation_class' => 'Relation Class',
+            'relation_id' => 'Relation ID',
         ];
-    }
-
-    /**
-     * Gets query for [[Class]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getClass()
-    {
-        return $this->hasOne(CharacterClass::className(), ['id' => 'class_id']);
     }
 
     /**

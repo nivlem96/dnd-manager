@@ -16,6 +16,10 @@ use Yii;
  */
 class Inventory extends \yii\db\ActiveRecord
 {
+    public $itemId;
+    public $armorId;
+    public $weaponId;
+
     /**
      * {@inheritdoc}
      */

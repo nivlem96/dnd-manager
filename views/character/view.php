@@ -15,7 +15,7 @@ use app\models\User;
 
 $this->title = $model->name;
 ?>
-<h1><?= HTML::encode($this->title) . ' (' . $model->race->name . ') ' . $model->level ?></h1>
+<h1><?= HTML::encode($this->title) . ' (' . Html::a($model->race->name,['/race/view','id'=>$model->race->id]) . ') ' . $model->level ?></h1>
 
 <div class="campaign-wrapper">
     <?php if ($model->player_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
@@ -31,6 +31,18 @@ $this->title = $model->name;
 			</div>
 		</div>
     <?php endif; ?>
+	<?php $classRelations = $model->getClassRelations()->all() ?>
+	<div class="row">
+		<?php foreach ($classRelations as $relation):?>
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-2">
+						<?= Html::a($relation->class->name,['/character-class/view','id'=>$relation->class->id]) . ' ' .  $relation->level ?>
+					</div>
+				</div>
+			</div>
+		<?php endforeach; ?>
+	</div>
 	<div class="row">
 
 		<div class="row">
@@ -128,12 +140,13 @@ $this->title = $model->name;
             <?= $model->background ?>
 		</div>
 	</div>
+
 	<div class="row">
 		<div class="col-md-4">
-			<h3>Classes</h3>
+			<h3>Skills</h3>
             <?php
             $dataProvider = new ActiveDataProvider([
-                'query' => $model->getClassRelations(),
+                'query' => $model->getSkillRelation(),
                 'pagination' => [
                     'pageSize' => 20,
                 ],
@@ -144,12 +157,15 @@ $this->title = $model->name;
                     [
                         'attribute' => 'name',
                         'value' => function ($model) {
-                            return Html::a($model->class->name, ['/character-class/view', 'id' => $model->class->id]);
+                            return Html::a($model->skill->name, ['/skill/view', 'id' => $model->skill->id]);
                         },
                         'format' => 'raw',
                     ],
                     [
-                        'attribute' => 'level',
+                        'attribute' => 'modifier',
+                        'value' => function ($model) {
+                            return $model->getModifier();
+                        },
                     ],
                 ],
             ]);
@@ -185,40 +201,9 @@ $this->title = $model->name;
             ?>
 		</div>
 		<div class="col-md-4">
-			<h3>Skills</h3>
-            <?php
-            $dataProvider = new ActiveDataProvider([
-                'query' => $model->getSkillRelation(),
-                'pagination' => [
-                    'pageSize' => 20,
-                ],
-            ]);
-            echo GridView::widget([
-                'dataProvider' => $dataProvider,
-                'columns' => [
-                    [
-                        'attribute' => 'name',
-                        'value' => function ($model) {
-                            return Html::a($model->skill->name, ['/skill/view', 'id' => $model->skill->id]);
-                        },
-                        'format' => 'raw',
-                    ],
-                    [
-                        'attribute' => 'modifier',
-                        'value' => function ($model) {
-                            return $model->getModifier();
-                        },
-                    ],
-                ],
-            ]);
-            ?>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-md-4">
 			<h3>Inventory</h3>
             <?php
+            echo Html::a('Add item', ['/inventory/add', 'characterId' => $model->id]) . '<br/>';
             $dataProvider = new ActiveDataProvider([
                 'query' => $model->getInventories(),
                 'pagination' => [
@@ -238,6 +223,13 @@ $this->title = $model->name;
                         },
                         'format' => 'raw',
                     ],
+	                [
+	                		'attribute' => 'action',
+		                    'value' => function($model) {
+                                return Html::a('X', ['/inventory/delete', 'id' => $model->id, 'characterId'=>$model->character->id]);
+		                    },
+                            'format' => 'raw',
+	                ]
                 ],
             ]);
             ?>
