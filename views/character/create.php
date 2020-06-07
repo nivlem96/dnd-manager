@@ -4,6 +4,7 @@
 
 /* @var $model app\models\Character */
 
+use app\models\Background;
 use app\models\Race;
 use app\models\CharacterClass;
 use app\models\User;
@@ -29,6 +30,7 @@ $this->title = 'Create character';
 	$userId = Yii::$app->user->id;
 	$races = User::getUserAvailableClassArray($userId,Race::className());
     $classes = User::getUserAvailableClassArray($userId,CharacterClass::className());
+    $backgrounds = User::getUserAvailableClassArray($userId,Background::className());
 	echo $form->field($model,'race_id')->dropDownList($races)->label('Race');?>
 	<div class="form-group field-character-race_id required has-success">
 		<label class="col-lg-1 control-label" for="class_relation-class_id">Class</label>
@@ -37,7 +39,8 @@ $this->title = 'Create character';
 		</div>
 		<div class="col-lg-8"><p class="help-block help-block-error "></p></div>
 	</div>
-    <?= $form->field($model, 'background')->textarea() ?>
+	<?= $form->field($model,'background_id')->dropDownList($backgrounds)->label('Background');?>
+    <?= $form->field($model, 'backstory')->textarea() ?>
 	<?= $form->field($model,'player_id')->hiddenInput(['value'=>Yii::$app->user->id])->label(false) ?>
 	<div class="form-group">
 		<table style="width: 100%">

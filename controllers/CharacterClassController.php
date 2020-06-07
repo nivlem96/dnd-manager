@@ -90,10 +90,17 @@ class CharacterClassController extends \yii\web\Controller {
                 'pageSize' => 20,
             ],
         ]);
+        $choiceProvider = new ActiveDataProvider([
+            'query' => $model->getChoices(),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
         return $this->render('view', [
             'model' => $model,
             'user' => $user,
             'featProvider' => $featProvider,
+            'choiceProvider' => $choiceProvider,
         ]);
     }
 

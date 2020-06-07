@@ -23,6 +23,10 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
 	<title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+	<script
+			src="https://code.jquery.com/jquery-3.5.1.slim.js"
+			integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM="
+			crossorigin="anonymous"></script>
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -55,6 +59,7 @@ AppAsset::register($this);
                 ['label' => 'Armor', 'url' => ['/armor']],
                 ['label' => 'Skills', 'url' => ['/skill']],
                 ['label' => 'Ammunitions', 'url' => ['/ammunition']],
+                ['label' => 'Backgrouns', 'url' => ['/background']],
             ],
         ];
         $items[] = [
@@ -97,7 +102,6 @@ AppAsset::register($this);
 		<p class="pull-right"><?= Yii::powered() ?></p>
 	</div>
 </footer>
-
 <?php $this->endBody() ?>
 </body>
 </html>

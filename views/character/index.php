@@ -7,7 +7,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = 'Spells';
+$this->title = 'Characters';
 ?>
 <h1><?= HTML::encode($this->title) ?></h1>
 

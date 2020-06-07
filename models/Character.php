@@ -9,9 +9,10 @@ use Yii;
  *
  * @property int                            $id
  * @property string                         $name
- * @property string|null                    $background
+ * @property string|null                    $backstory
  * @property int|null                       $race_id
  * @property int|null                       $player_id
+ * @property int|null                       $background_id
  * @property int|null                       $campaign_id
  * @property string|null                    $created_at
  * @property string|null                    $updated_at
@@ -30,6 +31,7 @@ use Yii;
  * @property Campaign                       $campaign
  * @property Race                           $race
  * @property User                           $player
+ * @property Background                     $background
  * @property CharacterProficiencyRelation[] $characterProficiencyRelations
  * @property ClassRelation[]                $classRelations
  * @property FeatRelation[]                 $featRelations
@@ -55,13 +57,14 @@ class Character extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['name'], 'required'],
-            [['background'], 'string'],
-            [['race_id', 'player_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints', 'proficiency', 'speed'], 'integer'],
+            [['backstory'], 'string'],
+            [['race_id', 'player_id', 'background_id', 'campaign_id', 'level', 'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma', 'max_hitpoints', 'current_hitpoints', 'proficiency', 'speed'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['campaign_id'], 'exist', 'skipOnError' => true, 'targetClass' => Campaign::className(), 'targetAttribute' => ['campaign_id' => 'id']],
             [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::className(), 'targetAttribute' => ['race_id' => 'id']],
             [['player_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['player_id' => 'id']],
+            [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['background_id' => 'id']],
         ];
     }
 
@@ -72,9 +75,10 @@ class Character extends \yii\db\ActiveRecord {
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'background' => 'Background',
+            'backstory' => 'Backstory',
             'race_id' => 'Race ID',
             'player_id' => 'Player ID',
+            'background_id' => 'Background ID',
             'campaign_id' => 'Campaign ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -117,6 +121,15 @@ class Character extends \yii\db\ActiveRecord {
      */
     public function getPlayer() {
         return $this->hasOne(User::className(), ['id' => 'player_id']);
+    }
+
+    /**
+     * Gets query for [[Player]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBackground() {
+        return $this->hasOne(Background::className(), ['id' => 'background_id']);
     }
 
     /**
@@ -192,6 +205,60 @@ class Character extends \yii\db\ActiveRecord {
         $stat = strtolower($stat);
         $value = $this->getStatValue($stat);
         return floor($value / 2) - 5;
+    }
+
+    /**
+     * @var Background $background
+     * @var CharacterClass $characterClass
+     */
+    public function getEquipmentOptions() {
+        $options = [];
+        $background = $this->getBackground()->one();
+        $characterClassRelations = $this->getClassRelations()->all();
+        $choices = $background->getChoices()->all();
+        foreach ($characterClassRelations as $relation) {
+            $choices = array_merge($choices,$relation->class->getChoices()->all());
+        }
+        foreach ($choices as $choice) {
+            /**
+             * @var Choice $choice
+             */
+            $choiceOptions = $choice->getChoiceOptions()->all();
+            $options[$choice->id] = [];
+            foreach ($choiceOptions as $choiceOption) {
+                /**
+                 * @var ChoiceOption $choiceOptions
+                 */
+                $options[$choice->id][$choiceOption->equipment_id] = $choiceOption->getEquipment()->name;
+            }
+        }
+        return $options;
+    }
+
+    public function getSkillChoices() {
+        $options = [];
+        $background = $this->getBackground()->one();
+        $characterClassRelations = $this->getClassRelations()->all();
+        $defaultSkills = [];
+        /**
+         * @var Background $background
+         */
+        $backgroundSkills = $background->getDefaultSkills()->select('skill_id')->column();
+        foreach ($characterClassRelations as $relation) {
+            /**
+             * @var CharacterClass $class
+             */
+            $class = $relation->class;
+            $defaultSkills = array_merge($defaultSkills,$class->getDefaultSkills()->where(['not in','skill_id',$backgroundSkills])->all());
+        }
+        foreach ($defaultSkills as $defaultSkill) {
+            /**
+             * @var DefaultSkill $defaultSkill
+             */
+            $skill = $defaultSkill->getSkill()->one();
+            $options[$skill->id] = $skill->name;
+        }
+        return $options;
     }
 
     public static function getLevelUpFeats($characterId) {

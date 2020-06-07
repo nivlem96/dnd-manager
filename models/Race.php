@@ -188,4 +188,32 @@ class Race extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'created_by_user_id']);
     }
+
+    public function getAbilityScoreModifier($stat) {
+        $modifier = 0;
+        if(!empty($this->parent_id)) {
+            $modifier = $this->parent->getAbilityScoreModifier($stat);
+        }
+        switch ($stat) {
+            case 'strength':
+                $modifier += $this->ability_score_strength;
+                break;
+            case 'dexterity':
+                $modifier += $this->ability_score_dexterity;
+                break;
+            case 'constitution':
+                $modifier += $this->ability_score_constitution;
+                break;
+            case 'intelligence':
+                $modifier += $this->ability_score_intelligence;
+                break;
+            case 'wisdom':
+                $modifier += $this->ability_score_wisdom;
+                break;
+            case 'charisma':
+                $modifier += $this->ability_score_charisma;
+                break;
+        }
+        return $modifier;
+    }
 }

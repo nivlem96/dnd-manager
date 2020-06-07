@@ -137,7 +137,7 @@ $this->title = $model->name;
 			<h4>Background</h4>
 		</div>
 		<div class="col-md-11">
-            <?= $model->background ?>
+            <?= $model->backstory ?>
 		</div>
 	</div>
 

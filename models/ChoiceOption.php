@@ -12,10 +12,13 @@ use Yii;
  * @property string|null $equipment_type
  * @property int|null $equipment_id
  *
+ * @property array $options
+ *
  * @property Choice $choice
  */
 class ChoiceOption extends \yii\db\ActiveRecord
 {
+    public $options;
     /**
      * {@inheritdoc}
      */
@@ -57,5 +60,16 @@ class ChoiceOption extends \yii\db\ActiveRecord
     public function getChoice()
     {
         return $this->hasOne(Choice::className(), ['id' => 'choice_id']);
+    }
+
+    public function getEquipment(){
+        switch ($this->equipment_type) {
+            case 'weapon':
+                return Weapon::findOne($this->equipment_id);
+            case 'item':
+                return Item::findOne($this->equipment_id);
+            case 'armor':
+                return Armor::findOne($this->equipment_id);
+        }
     }
 }

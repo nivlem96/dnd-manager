@@ -4,8 +4,10 @@ namespace app\controllers;
 
 use app\models\Character;
 use app\models\CharacterClass;
+use app\models\Choice;
 use app\models\ClassRelation;
 use app\models\FeatRelation;
+use app\models\Inventory;
 use app\models\Race;
 use app\models\Skill;
 use app\models\SkillRelation;
@@ -51,12 +53,12 @@ class CharacterController extends \yii\web\Controller {
                 $model->max_hitpoints = $class->hitdice + $model->getStatModifier('constitution');
                 $model->current_hitpoints = $model->max_hitpoints;
                 $model->speed = empty($race->speed) ? $race->parent->speed : $race->speed;
-                $model->strength += $race->ability_score_strength + $race->parent->ability_score_strength;
-                $model->dexterity += $race->ability_score_dexterity + $race->parent->ability_score_dexterity;
-                $model->constitution += $race->ability_score_constitution + $race->parent->ability_score_constitution;
-                $model->intelligence += $race->ability_score_intelligence + $race->parent->ability_score_intelligence;
-                $model->wisdom += $race->ability_score_wisdom + $race->parent->ability_score_wisdom;
-                $model->charisma += $race->ability_score_charisma + $race->parent->ability_score_charisma;
+                $model->strength += $race->getAbilityScoreModifier('strength');
+                $model->dexterity += $race->getAbilityScoreModifier('dexterity');
+                $model->constitution += $race->getAbilityScoreModifier('constitution');
+                $model->intelligence += $race->getAbilityScoreModifier('intelligence');
+                $model->wisdom += $race->getAbilityScoreModifier('wisdom');
+                $model->charisma += $race->getAbilityScoreModifier('charisma');
                 if ($model->validate()) {
                     $model->save();
                     $id = Yii::$app->db->getLastInsertID();
@@ -67,11 +69,44 @@ class CharacterController extends \yii\web\Controller {
                     $this->saveClassRelation($classData);
                     $this->saveFeatRelation($id);
                     $this->saveSkillRelation($id);
-                    return $this->goBack(['/character/view', 'id' => $id]);
+                    $choices = $model->getEquipmentOptions();
+                    $skills = $model->getSkillChoices();
+                    return $this->render('create-2', [
+                        'model' => $model,
+                        'choices' => $choices,
+                        'skills' => $skills,
+                        'id' => $id
+                    ]);
                 } else {
                     var_dump($model->getErrors());
                 }
             }
+        }
+        if ($choices = Yii::$app->request->post('Inventory')) {
+            $id = Yii::$app->request->post('characterId');
+            $character = Character::findOne($id);
+            $skillChoices = Yii::$app->request->post('Skills');
+            foreach ($skillChoices as $skill) {
+                /**
+                 * @var SkillRelation $skillRelation
+                 */
+                $skillRelation = $character->getSkillRelation()->where(['skill_id'=>$skill])->one();
+                $skillRelation->proficient = 1;
+                $skillRelation->save();
+            }
+            foreach ($choices as $choice_id => $equipment_id) {
+                $choice = Choice::findOne($choice_id);
+                $inventory = New Inventory();
+                $inventory->character_id = $id;
+                $inventory->equipment_id = $equipment_id;
+                $inventory->equipment_table = $choice->choice_type;
+                if ($inventory->validate()) {
+                    $inventory->save();
+                } else {
+                    var_dump($inventory->getErrors());
+                }
+            }
+            return $this->goBack(['/character/view', 'id' => $id]);
         }
         return $this->render('create', [
             'model' => $model,
@@ -253,14 +288,18 @@ class CharacterController extends \yii\web\Controller {
     }
 
     private function saveSkillRelation($characterId) {
+        $character = Character::findOne($characterId);
+        $background = $character->getBackground()->one();
+        $backgroundSkills = $background->getDefaultSkills()->select('skill_id')->column();
         $availableSkills = User::getUserAvailableClass(Yii::$app->user->id,Skill::className())->all();
         foreach ($availableSkills as $key => $skill) {
             $attributes = SkillRelation::find()->where(['character_id' => $characterId])->andWhere(['skill_id' => $skill->id])->all();
             if (empty($attributes)) {
-                $featRelation = new SkillRelation();
-                $featRelation->skill_id = $skill->id;
-                $featRelation->character_id = $characterId;
-                $featRelation->save();
+                $skillRelation = new SkillRelation();
+                $skillRelation->skill_id = $skill->id;
+                $skillRelation->character_id = $characterId;
+                $skillRelation->proficient = in_array($skill->id,$backgroundSkills) ? 1 : 0;
+                $skillRelation->save();
             } else {
                 unset($availableSkills[$key]);
             }

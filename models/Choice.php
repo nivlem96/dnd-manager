@@ -8,7 +8,9 @@ use Yii;
  * This is the model class for table "choice".
  *
  * @property int $id
- * @property int|null $class_id
+ * @property int|null $relation_id
+ * @property string|null $relation_class
+ * @property string|null $choice_type
  *
  * @property CharacterClass $class
  * @property ChoiceOption[] $choiceOptions
@@ -29,7 +31,7 @@ class Choice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['relation_class'], 'string'],
+            [['relation_class','choice_type'], 'string'],
             [['relation_id'], 'integer'],
         ];
     }

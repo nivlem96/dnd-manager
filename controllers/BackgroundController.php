@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Background;
+use app\models\DefaultSkill;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -43,6 +44,14 @@ class BackgroundController extends \yii\web\Controller {
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
+                $id = Yii::$app->db->getLastInsertID();
+                DefaultSkill::deleteAll(['background_id'=>$id]);
+                foreach ($attributes['skills_to_choose'] as $skillId) {
+                    $SkillRelation = new DefaultSkill();
+                    $SkillRelation->skill_id = $skillId;
+                    $SkillRelation->background_id = $id;
+                    $SkillRelation->save();
+                }
                 return $this->goBack(['/background']);
             } else {
                 var_dump($model->getErrors());
@@ -50,6 +59,7 @@ class BackgroundController extends \yii\web\Controller {
         }
         return $this->render('create', [
             'model' => $model,
+            'user' => Yii::$app->user,
         ]);
     }
 
@@ -63,18 +73,27 @@ class BackgroundController extends \yii\web\Controller {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
         }
+        $user = User::findIdentity(Yii::$app->user->id);
         $model = Background::find()->where(['id'=>$id])->one();
         if ($attributes = Yii::$app->request->post('Background')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
                 $model->save();
+                DefaultSkill::deleteAll(['background_id'=>$id]);
+                foreach ($attributes['skills_to_choose'] as $skillId) {
+                    $SkillRelation = new DefaultSkill();
+                    $SkillRelation->skill_id = $skillId;
+                    $SkillRelation->background_id = $id;
+                    $SkillRelation->save();
+                }
                 return $this->goBack(['/background/view','id'=>$id]);
             } else {
                 var_dump($model->getErrors());
             }
         }
         return $this->render('create', [
+            'user' => $user,
             'model' => $model,
         ]);
     }
@@ -93,9 +112,16 @@ class BackgroundController extends \yii\web\Controller {
         $Background = new Background();
         $user = User::findIdentity(Yii::$app->user->id);
         $model = $Background->findOne($id);
+        $choiceProvider = new ActiveDataProvider([
+            'query' => $model->getChoices(),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
         return $this->render('view', [
             'model' => $model,
             'user' => $user,
+            'choiceProvider' => $choiceProvider,
         ]);
     }
 

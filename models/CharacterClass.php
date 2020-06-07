@@ -7,45 +7,43 @@ use Yii;
 /**
  * This is the model class for table "character_class".
  *
- * @property int $id
- * @property string $name
- * @property int|null $created_by_user_id
- * @property string|null $created_at
- * @property string|null $updated_at
- * @property int $hitdice
- * @property string|null $saving_throws
- * @property int|null $skill_choices
- * @property string|null $spell_stat
- * @property int|null $parent_id
+ * @property int                   $id
+ * @property string                $name
+ * @property int|null              $created_by_user_id
+ * @property string|null           $created_at
+ * @property string|null           $updated_at
+ * @property int                   $hitdice
+ * @property string|null           $saving_throws
+ * @property int|null              $skill_choices
+ * @property string|null           $spell_stat
+ * @property int|null              $parent_id
  *
- * @property CharacterClass $parent
- * @property CharacterClass[] $characterClasses
- * @property User $createdByUser
- * @property Choice[] $choices
- * @property ClassRelation[] $classRelations
- * @property DefaultSkill[] $defaultSkills
- * @property Feat[] $feats
- * @property FeatRelation[] $featRelations
- * @property Npc[] $npcs
+ * @property CharacterClass        $parent
+ * @property CharacterClass[]      $characterClasses
+ * @property User                  $createdByUser
+ * @property Choice[]              $choices
+ * @property ClassRelation[]       $classRelations
+ * @property DefaultSkill[]        $defaultSkills
+ * @property Feat[]                $feats
+ * @property FeatRelation[]        $featRelations
+ * @property Npc[]                 $npcs
  * @property ProficiencyRelation[] $proficiencyRelations
- * @property SpellSlot[] $spellSlots
+ * @property SpellSlot[]           $spellSlots
  */
-class CharacterClass extends \yii\db\ActiveRecord
-{
+class CharacterClass extends \yii\db\ActiveRecord {
     public $skills_to_choose;
+
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'character_class';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['name'], 'required'],
             [['created_by_user_id', 'hitdice', 'skill_choices', 'parent_id'], 'integer'],
@@ -59,8 +57,7 @@ class CharacterClass extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'name' => 'Name',
@@ -74,18 +71,19 @@ class CharacterClass extends \yii\db\ActiveRecord
             'parent_id' => 'Parent ID',
         ];
     }
-    public function afterFind ( ) {
-        if(is_string($this->saving_throws)) {
-            $this->saving_throws = json_decode($this->saving_throws,true);
+
+    public function afterFind() {
+        if (is_string($this->saving_throws)) {
+            $this->saving_throws = json_decode($this->saving_throws, true);
         }
-        if(!empty($defaultSkills = $this->getDefaultSkills()->all())) {
+        if (!empty($defaultSkills = $this->getDefaultSkills()->all())) {
             $result = [];
             foreach ($defaultSkills as $skill) {
                 $result[] = $skill->skill_id;
             }
             $this->skills_to_choose = $result;
         }
-}
+    }
 
 
     /**
@@ -93,8 +91,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getParent()
-    {
+    public function getParent() {
         return $this->hasOne(CharacterClass::className(), ['id' => 'parent_id']);
     }
 
@@ -103,8 +100,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCharacterClasses()
-    {
+    public function getCharacterClasses() {
         return $this->hasMany(CharacterClass::className(), ['parent_id' => 'id']);
     }
 
@@ -113,8 +109,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedByUser()
-    {
+    public function getCreatedByUser() {
         return $this->hasOne(User::className(), ['id' => 'created_by_user_id']);
     }
 
@@ -123,9 +118,8 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getChoices()
-    {
-        return $this->hasMany(Choice::className(), ['class_id' => 'id']);
+    public function getChoices() {
+        return Choice::find()->where(['relation_class' => CharacterClass::className()])->andWhere(['relation_id' => $this->id]);
     }
 
     /**
@@ -133,8 +127,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getClassRelations()
-    {
+    public function getClassRelations() {
         return $this->hasMany(ClassRelation::className(), ['class_id' => 'id']);
     }
 
@@ -143,8 +136,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getDefaultSkills()
-    {
+    public function getDefaultSkills() {
         return $this->hasMany(DefaultSkill::className(), ['class_id' => 'id']);
     }
 
@@ -153,8 +145,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFeats()
-    {
+    public function getFeats() {
         return $this->hasMany(Feat::className(), ['class_id' => 'id']);
     }
 
@@ -163,8 +154,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFeatRelations()
-    {
+    public function getFeatRelations() {
         return $this->hasMany(FeatRelation::className(), ['class_id' => 'id']);
     }
 
@@ -173,8 +163,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getNpcs()
-    {
+    public function getNpcs() {
         return $this->hasMany(Npc::className(), ['class_id' => 'id']);
     }
 
@@ -183,8 +172,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getProficiencyRelations()
-    {
+    public function getProficiencyRelations() {
         return $this->hasMany(ProficiencyRelation::className(), ['class_id' => 'id']);
     }
 
@@ -193,8 +181,7 @@ class CharacterClass extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getSpellSlots()
-    {
+    public function getSpellSlots() {
         return $this->hasMany(SpellSlot::className(), ['class_id' => 'id']);
     }
 }
