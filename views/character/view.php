@@ -12,10 +12,11 @@ use yii\debug\models\timeline\DataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use app\models\User;
+use yii\helpers\Url;
 
 $this->title = $model->name;
 ?>
-<h1><?= HTML::encode($this->title) . ' (' . Html::a($model->race->name,['/race/view','id'=>$model->race->id]) . ') ' . $model->level ?></h1>
+<h1><?= HTML::encode($this->title) . ' (' . Html::a($model->race->name, ['/race/view', 'id' => $model->race->id]) . ') ' . $model->level ?></h1>
 
 <div class="campaign-wrapper">
     <?php if ($model->player_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
@@ -31,17 +32,17 @@ $this->title = $model->name;
 			</div>
 		</div>
     <?php endif; ?>
-	<?php $classRelations = $model->getClassRelations()->all() ?>
+    <?php $classRelations = $model->getClassRelations()->all() ?>
 	<div class="row">
-		<?php foreach ($classRelations as $relation):?>
+        <?php foreach ($classRelations as $relation): ?>
 			<div class="col-md-12">
 				<div class="row">
 					<div class="col-md-2">
-						<?= Html::a($relation->class->name,['/character-class/view','id'=>$relation->class->id]) . ' ' .  $relation->level ?>
+                        <?= Html::a($relation->class->name, ['/character-class/view', 'id' => $relation->class->id]) . ' ' . $relation->level ?>
 					</div>
 				</div>
 			</div>
-		<?php endforeach; ?>
+        <?php endforeach; ?>
 	</div>
 	<div class="row">
 
@@ -59,7 +60,7 @@ $this->title = $model->name;
 					Armor Class:
 				</div>
 				<div class="col-md-6">
-                    <?= $model->armor_class ?>
+                    <?= $model->getArmorClass() ?>
 				</div>
 			</div>
 			<div class="col-md-4">
@@ -223,17 +224,66 @@ $this->title = $model->name;
                         },
                         'format' => 'raw',
                     ],
-	                [
-	                		'attribute' => 'action',
-		                    'value' => function($model) {
-                                return Html::a('X', ['/inventory/delete', 'id' => $model->id, 'characterId'=>$model->character->id]);
-		                    },
-                            'format' => 'raw',
-	                ]
+                    [
+                        'attribute' => 'quantity',
+                        'value' => function ($model) {
+                            /**
+                             * @var \app\models\Inventory $model
+                             */
+                            return $model->quantity;
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'equip',
+                        'value' => function ($model) {
+                            /**
+                             * @var \app\models\Inventory $model
+                             */
+                            return Html::checkbox('Equipped', $model->equipped, ['class' => 'equip-checkbox', 'data-inventory-id' => $model->id]);
+                        },
+                        'format' => 'raw',
+                    ],
+                    [
+                        'attribute' => 'delete',
+                        'value' => function ($model) {
+                            /**
+                             * @var \app\models\Inventory $model
+                             */
+                            return Html::a('X', ['/inventory/delete', 'id' => $model->id, 'characterId' => $model->character->id]);
+                        },
+                        'format' => 'raw',
+                    ],
                 ],
             ]);
             ?>
 		</div>
 	</div>
+	<script type="text/javascript">
+        $('.equip-checkbox').change(function () {
+            let id = $(this).data('inventory-id');
+            let value = 0;
+            if($(this). is(":checked")){
+                value = 1;
+            }
+            else if($(this). is(":not(:checked)")){
+                value = 0;
+            }
+            $.ajax({
+                type: "POST",
+                url: "<?= Url::to(['/inventory/toggle-equipment']) ?>",
+                data: { 'id' : id,'equipped':value },
+                success: function (data) {
+                    //do something
+                    location.reload();
+                },
+                error: function (errormessage) {
 
+                    //do something else
+                    console.log(errormessage)
+
+                }
+            });
+        });
+	</script>
 </div>

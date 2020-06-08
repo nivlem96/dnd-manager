@@ -11,6 +11,8 @@ use Yii;
  * @property int $character_id
  * @property string $equipment_table
  * @property int $equipment_id
+ * @property int $equipped
+ * @property int $quantity
  *
  * @property Character $character
  */

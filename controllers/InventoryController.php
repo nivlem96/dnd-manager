@@ -46,4 +46,24 @@ class InventoryController extends \yii\web\Controller {
         ]);
     }
 
+    public function actionToggleEquipment() {
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $id = $data['id'];
+            $value = $data['equipped'];
+            $inventory = Inventory::findOne($id);
+            if ($value == 1) {
+                $equippedInventory = Inventory::find()->where(['character_id' => $inventory->character_id])->andWhere(['equipped' => 1])->andWhere(['equipment_table' => $inventory->equipment_table])->all();
+                if (count($equippedInventory) > 0) {
+                    foreach ($equippedInventory as $inv) {
+                        $inv->equipped = 0;
+                        $inv->save();
+                    }
+                }
+            }
+            $inventory->equipped = $value;
+            $inventory->save();
+        }
+    }
+
 }

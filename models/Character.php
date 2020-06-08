@@ -201,10 +201,11 @@ class Character extends \yii\db\ActiveRecord {
      *
      * @return int
      */
-    public function getStatModifier($stat) {
+    public function getStatModifier($stat,int $max=0) {
         $stat = strtolower($stat);
         $value = $this->getStatValue($stat);
-        return floor($value / 2) - 5;
+        $return = floor($value / 2) - 5;
+        return $max > 0 && $return > $max ? $max : $return;
     }
 
     /**
@@ -259,6 +260,22 @@ class Character extends \yii\db\ActiveRecord {
             $options[$skill->id] = $skill->name;
         }
         return $options;
+    }
+
+    public function getArmorClass() {
+        $ac = 10;
+        /**
+         * @var Armor $armor
+         */
+        $inventory = $this->getInventories()->where(['equipment_table'=>Constants::ITEM_TYPE_ARMOR])->andWhere(['equipped'=>1])->one();
+        $armor = Armor::findOne($inventory->equipment_id);
+        if(empty($armor)) {
+            $ac = 10 + $this->getStatModifier('dexterity');
+        } else {
+            $ac = $armor->armor_class_modifier !== null ? $armor->armor_class + $this->getStatModifier($armor->armor_class_modifier,$armor->armor_class_modifier_max) : $armor->armor_class;
+        }
+
+        return $ac;
     }
 
     public static function getLevelUpFeats($characterId) {
