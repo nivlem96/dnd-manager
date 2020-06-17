@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\DefaultLanguages;
 use app\models\Race;
 use app\models\User;
 use Yii;
@@ -62,7 +63,16 @@ class RaceController extends \yii\web\Controller {
                     $model->ability_score_charisma = 0;
                 }
                 $model->save();
-                return $this->goBack(['/race']);
+                if (empty($id)) {
+                    $id = Yii::$app->db->getLastInsertID();
+                }
+                foreach ($attributes['default_languages'] as $languageId) {
+                    $SkillRelation = new DefaultLanguages();
+                    $SkillRelation->language_id = $languageId;
+                    $SkillRelation->race_id = $id;
+                    $SkillRelation->save();
+                }
+                return $this->goBack(['/race/view','id'=>$id]);
             } else {
                 var_dump($model->getErrors());
             }
@@ -87,7 +97,36 @@ class RaceController extends \yii\web\Controller {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
             if ($model->validate()) {
+                if(empty($model->ability_score_strength)) {
+                    $model->ability_score_strength = 0;
+                }
+                if(empty($model->ability_score_dexterity)) {
+                    $model->ability_score_dexterity = 0;
+                }
+                if(empty($model->ability_score_constitution)) {
+                    $model->ability_score_constitution = 0;
+                }
+                if(empty($model->ability_score_intelligence)) {
+                    $model->ability_score_intelligence = 0;
+                }
+                if(empty($model->ability_score_wisdom)) {
+                    $model->ability_score_wisdom = 0;
+                }
+                if(empty($model->ability_score_charisma)) {
+                    $model->ability_score_charisma = 0;
+                }
                 $model->save();
+                if (empty($id)) {
+                    $id = Yii::$app->db->getLastInsertID();
+                }
+                foreach ($attributes['default_languages'] as $languageId) {
+                    if(empty(DefaultLanguages::findOne(['language_id'=>$languageId,'race_id'=>$id]))) {
+                        $SkillRelation = new DefaultLanguages();
+                        $SkillRelation->language_id = $languageId;
+                        $SkillRelation->race_id = $id;
+                        $SkillRelation->save();
+                    }
+                }
                 return $this->goBack(['/race/view','id'=>$id]);
             } else {
                 var_dump($model->getErrors());

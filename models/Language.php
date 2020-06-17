@@ -32,7 +32,7 @@ class Language extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'updated_at'], 'safe'],
-            [['language'], 'string', 'max' => 255],
+            [['name'], 'string', 'max' => 255],
         ];
     }
 
@@ -43,7 +43,7 @@ class Language extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'language' => 'Language',
+            'name' => 'Name',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

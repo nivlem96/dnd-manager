@@ -59,7 +59,8 @@ AppAsset::register($this);
                 ['label' => 'Armor', 'url' => ['/armor']],
                 ['label' => 'Skills', 'url' => ['/skill']],
                 ['label' => 'Ammunitions', 'url' => ['/ammunition']],
-                ['label' => 'Backgrouns', 'url' => ['/background']],
+                ['label' => 'Backgrounds', 'url' => ['/background']],
+                ['label' => 'Languages', 'url' => ['/language']],
             ],
         ];
         $items[] = [

@@ -25,14 +25,4 @@ $this->title = $model->name;
 			</div>
 		</div>
     <?php endif; ?>
-	<div class="row">
-		<div class="row">
-			<div class="col-md-1">
-				<h4>Description</h4>
-			</div>
-			<div class="col-md-11">
-                <?= $model->description ?>
-			</div>
-		</div>
-	</div>
 </div>

@@ -39,6 +39,7 @@ use Yii;
  */
 class Race extends \yii\db\ActiveRecord
 {
+    public $default_languages;
     /**
      * {@inheritdoc}
      */
@@ -87,6 +88,16 @@ class Race extends \yii\db\ActiveRecord
             'alignment' => 'Alignment',
             'language_choice' => 'Language Choice',
         ];
+    }
+
+    public function afterFind() {
+        if (!empty($defaultLanguages = $this->getDefaultLanguages()->all())) {
+            $result = [];
+            foreach ($defaultLanguages as $language) {
+                $result[] = $language->language_id;
+            }
+            $this->default_languages = $result;
+        }
     }
 
     /**

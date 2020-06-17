@@ -33,6 +33,7 @@ $this->title = 'Create race';
     <?= $form->field($model, 'size')->textInput() ?>
     <?= $form->field($model, 'alignment')->textInput() ?>
     <?= $form->field($model, 'language_choice')->input('number') ?>
+    <?= $form->field($model, 'default_languages')->checkboxList(\app\models\User::getUserAvailableClassArray($userId,\app\models\Language::className(),false))->label('Languages') ?>
 	<div class="form-group">
 		<table style="width: 100%">
 			<tr>
