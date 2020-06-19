@@ -9,7 +9,6 @@ use Yii;
  *
  * @property int $id
  * @property int|null $proficiency_id
- * @property int|null $race_id
  * @property int|null $class_id
  * @property int|null $background_id
  * @property int|null $choice
@@ -17,7 +16,6 @@ use Yii;
  * @property Background $background
  * @property CharacterClass $class
  * @property Proficiency $proficiency
- * @property Race $race
  */
 class ProficiencyRelation extends \yii\db\ActiveRecord
 {
@@ -35,11 +33,10 @@ class ProficiencyRelation extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['proficiency_id', 'race_id', 'class_id', 'background_id', 'choice'], 'integer'],
+            [['proficiency_id', 'class_id', 'background_id', 'choice'], 'integer'],
             [['background_id'], 'exist', 'skipOnError' => true, 'targetClass' => Background::className(), 'targetAttribute' => ['background_id' => 'id']],
             [['class_id'], 'exist', 'skipOnError' => true, 'targetClass' => CharacterClass::className(), 'targetAttribute' => ['class_id' => 'id']],
             [['proficiency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Proficiency::className(), 'targetAttribute' => ['proficiency_id' => 'id']],
-            [['race_id'], 'exist', 'skipOnError' => true, 'targetClass' => Race::className(), 'targetAttribute' => ['race_id' => 'id']],
         ];
     }
 
@@ -51,7 +48,6 @@ class ProficiencyRelation extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'proficiency_id' => 'Proficiency ID',
-            'race_id' => 'Race ID',
             'class_id' => 'Class ID',
             'background_id' => 'Background ID',
             'choice' => 'Choice',
@@ -86,15 +82,5 @@ class ProficiencyRelation extends \yii\db\ActiveRecord
     public function getProficiency()
     {
         return $this->hasOne(Proficiency::className(), ['id' => 'proficiency_id']);
-    }
-
-    /**
-     * Gets query for [[Race]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRace()
-    {
-        return $this->hasOne(Race::className(), ['id' => 'race_id']);
     }
 }

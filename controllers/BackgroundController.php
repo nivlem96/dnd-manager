@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Background;
 use app\models\DefaultSkill;
+use app\models\ProficiencyRelation;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -74,7 +75,10 @@ class BackgroundController extends \yii\web\Controller {
             return $this->goHome();
         }
         $user = User::findIdentity(Yii::$app->user->id);
+        /** @var Background $model */
         $model = Background::find()->where(['id'=>$id])->one();
+        $model->skills_to_choose = $model->getDefaultSkillArray();
+        $model->proficiencies = $model->getProficiencies();
         if ($attributes = Yii::$app->request->post('Background')) {
             $attributes['created_by_user_id'] = Yii::$app->user->id;
             $model->setAttributes($attributes);
@@ -84,6 +88,12 @@ class BackgroundController extends \yii\web\Controller {
                 foreach ($attributes['skills_to_choose'] as $skillId) {
                     $SkillRelation = new DefaultSkill();
                     $SkillRelation->skill_id = $skillId;
+                    $SkillRelation->background_id = $id;
+                    $SkillRelation->save();
+                }
+                foreach ($attributes['proficiencies'] as $proficiencyId) {
+                    $SkillRelation = new ProficiencyRelation();
+                    $SkillRelation->proficiency_id = $proficiencyId;
                     $SkillRelation->background_id = $id;
                     $SkillRelation->save();
                 }

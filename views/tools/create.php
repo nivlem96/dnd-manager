@@ -2,12 +2,12 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 
-/* @var $model app\models\Weapon */
+/* @var $model app\models\Tools */
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = 'Create weapon';
+$this->title = 'Create tools';
 ?>
 <h1><?= HTML::encode($this->title) ?></h1>
 
@@ -20,19 +20,13 @@ $this->title = 'Create weapon';
             'labelOptions' => ['class' => 'col-lg-1 control-label'],
         ],
     ]);
-    $proficiencies = \app\models\User::getUserAvailableClassArray(Yii::$app->user->id,\app\models\Proficiency::className(),false);
+    $proficiencies = \app\models\User::getUserAvailableClassArray(Yii::$app->user->id, \app\models\Proficiency::className(), false);
     ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'description')->textarea() ?>
-    <?= $form->field($model, 'type')->textInput() ?>
     <?= $form->field($model, 'cost')->input('number') ?>
     <?= $form->field($model, 'weight')->input('number') ?>
-    <?= $form->field($model, 'damage_die')->input('number') ?>
-    <?= $form->field($model, 'damage_die_amount')->input('number') ?>
-    <?= $form->field($model, 'damage_type')->textInput() ?>
-    <?= $form->field($model, 'bonus')->input('number') ?>
-    <?= $form->field($model, 'properties')->textInput() ?>
     <?= $form->field($model, 'proficiency_id')->dropDownList($proficiencies) ?>
 
 	<div class="form-group">

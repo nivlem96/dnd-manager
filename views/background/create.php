@@ -24,6 +24,7 @@ $this->title = 'Create background';
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
     <?= $form->field($model, 'skills_to_choose')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Skill::className(),false))->label('Skills') ?>
+    <?= $form->field($model, 'proficiencies')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Proficiency::className(),false))->label('Proficiencies') ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">

@@ -55,12 +55,14 @@ AppAsset::register($this);
                 ['label' => 'Feats', 'url' => ['/feat']],
                 ['label' => 'Spells', 'url' => ['/spell']],
                 ['label' => 'Items', 'url' => ['/item']],
+                ['label' => 'Tools', 'url' => ['/tools']],
                 ['label' => 'Weapons', 'url' => ['/weapon']],
                 ['label' => 'Armor', 'url' => ['/armor']],
                 ['label' => 'Skills', 'url' => ['/skill']],
                 ['label' => 'Ammunitions', 'url' => ['/ammunition']],
                 ['label' => 'Backgrounds', 'url' => ['/background']],
                 ['label' => 'Languages', 'url' => ['/language']],
+                ['label' => 'Proficiencies', 'url' => ['/proficiency']],
             ],
         ];
         $items[] = [

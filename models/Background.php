@@ -20,6 +20,7 @@ use Yii;
  */
 class Background extends \yii\db\ActiveRecord {
     public $skills_to_choose;
+    public $proficiencies;
 
     /**
      * {@inheritdoc}
@@ -88,5 +89,23 @@ class Background extends \yii\db\ActiveRecord {
      */
     public function getChoices() {
         return Choice::find()->where(['relation_class' => Background::className()])->andWhere(['relation_id' => $this->id]);
+    }
+
+    public function getdefaultSkillArray() {
+        $skills = $this->getDefaultSkills()->all();
+        $result = [];
+        foreach ($skills as $skill) {
+            $result[] = $skill->skill_id;
+        }
+        return $result;
+    }
+
+    public function getProficiencies() {
+        $relations = $this->getProficiencyRelations()->all();
+        $return = [];
+
+        foreach ($relations as $relation) {
+            $return[] = $relation->proficiency_id;
+        }
     }
 }

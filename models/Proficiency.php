@@ -78,6 +78,16 @@ class Proficiency extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Items]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTools()
+    {
+        return $this->hasMany(Tools::className(), ['proficiency_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[ProficiencyRelations]].
      *
      * @return \yii\db\ActiveQuery

@@ -22,6 +22,10 @@ $this->title = 'Create item';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'description')->textarea() ?>
+    <?= $form->field($model, 'type')->textInput() ?>
+    <?= $form->field($model, 'cost')->input('number') ?>
+    <?= $form->field($model, 'weight')->input('number') ?>
 
 	<div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">
