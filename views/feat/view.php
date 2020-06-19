@@ -1,12 +1,14 @@
 <?php
 /**
- * @var $this  yii\web\View
- * @var $form  yii\bootstrap\ActiveForm
+ * @var $this                 yii\web\View
+ * @var $form                 yii\bootstrap\ActiveForm
  *
- * @var $model app\models\Feat
- * @var $user app\models\User
+ * @var $model                app\models\Feat
+ * @var $featLevelProvider    app\models\FeatLevel
+ * @var $user                 app\models\User
  **/
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use app\models\User;
 
@@ -33,6 +35,40 @@ $this->title = $model->name;
 			<div class="col-md-11">
                 <?= $model->description ?>
 			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<h3>Feats</h3>
+            <?php if ($model->created_by_user_id == $user->id || $user->rank >= User::RANK_MANAGER): ?>
+				<div class="row">
+					<div class="col-md-12">
+                        <?= Html::a('add level condition', ['/feat-level/create', 'feat_id' => $model->id]) ?>
+					</div>
+				</div>
+            <?php endif; ?>
+            <?=
+            GridView::widget([
+                'dataProvider' => $featLevelProvider,
+                'columns' => [
+                    [
+                        'attribute' => 'level',
+                    ],
+                    [
+                        'attribute' => 'counter',
+                    ],
+                    [
+                        'attribute' => 'die_number',
+                    ],
+                    [
+                        'value' => function ($model) {
+                            return Html::a('edit', ['/feat-level/create', 'id' => $model->id, 'feat_id' => $model->feat_id]) . ' ' . Html::a('delete', ['/feat-level/delete', 'id' => $model->id]);
+                        },
+                        'format' => 'raw',
+                    ],
+                ],
+            ]);
+            ?>
 		</div>
 	</div>
 </div>

@@ -16,7 +16,7 @@ use Yii;
  * @property int|null                       $campaign_id
  * @property string|null                    $created_at
  * @property string|null                    $updated_at
- * @property int|null                       $level
+ * @property int                      $level
  * @property int                            $strength
  * @property int                            $dexterity
  * @property int                            $constitution
@@ -43,6 +43,7 @@ use Yii;
  */
 class Character extends \yii\db\ActiveRecord {
     public $armor_class;
+    public $dice;
 
     /**
      * {@inheritdoc}
@@ -201,7 +202,7 @@ class Character extends \yii\db\ActiveRecord {
      *
      * @return int
      */
-    public function getStatModifier($stat,int $max=0) {
+    public function getStatModifier($stat, int $max = 0) {
         $stat = strtolower($stat);
         $value = $this->getStatValue($stat);
         $return = floor($value / 2) - 5;
@@ -209,7 +210,7 @@ class Character extends \yii\db\ActiveRecord {
     }
 
     /**
-     * @var Background $background
+     * @var Background     $background
      * @var CharacterClass $characterClass
      */
     public function getEquipmentOptions() {
@@ -218,7 +219,7 @@ class Character extends \yii\db\ActiveRecord {
         $characterClassRelations = $this->getClassRelations()->all();
         $choices = $background->getChoices()->all();
         foreach ($characterClassRelations as $relation) {
-            $choices = array_merge($choices,$relation->class->getChoices()->all());
+            $choices = array_merge($choices, $relation->class->getChoices()->all());
         }
         foreach ($choices as $choice) {
             /**
@@ -250,7 +251,7 @@ class Character extends \yii\db\ActiveRecord {
              * @var CharacterClass $class
              */
             $class = $relation->class;
-            $defaultSkills = array_merge($defaultSkills,$class->getDefaultSkills()->where(['not in','skill_id',$backgroundSkills])->all());
+            $defaultSkills = array_merge($defaultSkills, $class->getDefaultSkills()->where(['not in', 'skill_id', $backgroundSkills])->all());
         }
         foreach ($defaultSkills as $defaultSkill) {
             /**
@@ -264,17 +265,19 @@ class Character extends \yii\db\ActiveRecord {
 
     public function getArmorClass() {
         $ac = 10;
+        $armor = null;
         /**
          * @var Armor $armor
          */
-        $inventory = $this->getInventories()->where(['equipment_table'=>Constants::ITEM_TYPE_ARMOR])->andWhere(['equipped'=>1])->one();
-        $armor = Armor::findOne($inventory->equipment_id);
-        if(empty($armor)) {
+        $inventory = $this->getInventories()->where(['equipment_table' => Constants::ITEM_TYPE_ARMOR])->andWhere(['equipped' => 1])->one();
+        if (!empty($inventory)) {
+            $armor = Armor::findOne($inventory->equipment_id);
+        }
+        if (empty($armor)) {
             $ac = 10 + $this->getStatModifier('dexterity');
         } else {
-            $ac = $armor->armor_class_modifier !== null ? $armor->armor_class + $this->getStatModifier($armor->armor_class_modifier,$armor->armor_class_modifier_max) : $armor->armor_class;
+            $ac = $armor->armor_class_modifier !== null ? $armor->armor_class + $this->getStatModifier($armor->armor_class_modifier, $armor->armor_class_modifier_max) : $armor->armor_class;
         }
-
         return $ac;
     }
 
@@ -302,5 +305,31 @@ class Character extends \yii\db\ActiveRecord {
         LanguageRelation::deleteAll(['character_id' => $characterId]);
         FeatRelation::deleteAll(['character_id' => $characterId]);
         SkillRelation::deleteAll(['character_id' => $characterId]);
+    }
+
+    public function checkFeatLevels() {
+        $featRelations = $this->getFeatRelations()->all();
+        foreach ($featRelations as $featRelation) {
+            /**
+             * @var FeatRelation $featRelation
+             * @var Feat $feat
+             * @var FeatLevel $featLevels
+             * @var ClassRelation $classRelation
+             */
+            $feat = $featRelation->getFeat()->one();
+            if(!empty($featLevels = $feat->getFeatLevels())) {
+                if(!empty($feat->class_id)) {
+                    $classRelation = $this->getClassRelations()->where(['class_id'=>$feat->class_id])->one();
+                    $level = $classRelation->level;
+                } elseif(!empty($feat->race_id)) {
+                    $level = $this->level;
+                }
+                if(!empty($featLevel = $featLevels->where(['level'=>$level])->one())) {
+                    $featRelation->counter = $featLevel->counter;
+                    $featRelation->counter_max = $featLevel->counter;
+                    $featRelation->save();
+                }
+            }
+        }
     }
 }

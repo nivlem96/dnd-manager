@@ -120,4 +120,14 @@ class Feat extends \yii\db\ActiveRecord
     {
         return $this->hasMany(FeatRelation::className(), ['feat_id' => 'id']);
     }
+
+    /**
+     * Gets query for [[FeatRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFeatLevels()
+    {
+        return $this->hasMany(FeatLevel::className(), ['feat_id' => 'id']);
+    }
 }

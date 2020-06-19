@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Feat;
+use app\models\FeatLevel;
 use app\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -102,9 +103,16 @@ class FeatController extends \yii\web\Controller {
         $Feat = new Feat();
         $user = User::findIdentity(Yii::$app->user->id);
         $model = $Feat->findOne($id);
+        $featLevelProvider = new ActiveDataProvider([
+            'query' => $model->getFeatLevels(),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
         return $this->render('view', [
             'model' => $model,
             'user' => $user,
+            'featLevelProvider' => $featLevelProvider,
         ]);
     }
 

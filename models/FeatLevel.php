@@ -11,7 +11,7 @@ use Yii;
  * @property int|null $feat_id
  * @property int|null $level
  * @property int|null $counter
- * @property string|null $damage
+ * @property string|null $die_number
  * @property string|null $created_at
  * @property string|null $updated_at
  *
@@ -35,7 +35,7 @@ class FeatLevel extends \yii\db\ActiveRecord
         return [
             [['feat_id', 'level', 'counter'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['damage'], 'string', 'max' => 255],
+            [['die_number'], 'string', 'max' => 255],
             [['feat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Feat::className(), 'targetAttribute' => ['feat_id' => 'id']],
         ];
     }
@@ -50,7 +50,7 @@ class FeatLevel extends \yii\db\ActiveRecord
             'feat_id' => 'Feat ID',
             'level' => 'Level',
             'counter' => 'Counter',
-            'damage' => 'Damage',
+            'die_number' => 'Die number',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

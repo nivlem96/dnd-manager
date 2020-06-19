@@ -59,6 +59,7 @@ class CharacterController extends \yii\web\Controller {
                 $model->intelligence += $race->getAbilityScoreModifier('intelligence');
                 $model->wisdom += $race->getAbilityScoreModifier('wisdom');
                 $model->charisma += $race->getAbilityScoreModifier('charisma');
+                $model->level = 1;
                 if ($model->validate()) {
                     $model->save();
                     $id = Yii::$app->db->getLastInsertID();
@@ -68,6 +69,7 @@ class CharacterController extends \yii\web\Controller {
                     ];
                     $this->saveClassRelation($classData);
                     $this->saveFeatRelation($id);
+                    $model->checkFeatLevels();
                     $this->saveSkillRelation($id);
                     $choices = $model->getEquipmentOptions();
                     $skills = $model->getSkillChoices();
@@ -221,10 +223,11 @@ class CharacterController extends \yii\web\Controller {
         }
         $Character = Character::findOne($characterId);
         if ($attributes = Yii::$app->request->post('Character')) {
-            $addNumber = $attributes['dice'] + $Character->getStatModifier('constitution') > 1 ? $attributes['dice'] + $Character->getStatModifier($Character->constitution) : 1;
+            $addNumber = $attributes['dice'] + $Character->getStatModifier('constitution') > 1 ? $attributes['dice'] + $Character->getStatModifier('constitution') : 1;
             $Character->max_hitpoints += $addNumber;
             $Character->current_hitpoints += $addNumber;
             $Character->save();
+            $Character->checkFeatLevels();
             $this->goBack(['/character/view', 'id' => $characterId]);
         } else {
             $classRelation = $Character->getClassRelations()->where(['class_id'=>$classId])->one();
