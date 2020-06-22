@@ -23,10 +23,13 @@ $this->title = 'Create background';
     ]); ?>
 
     <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'language_choices')->input('number') ?>
+    <?= $form->field($model, 'default_languages')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Language::className(),false))->label('Languages') ?>
     <?= $form->field($model, 'skills_to_choose')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Skill::className(),false))->label('Skills') ?>
     <?= $form->field($model, 'proficiencies')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Proficiency::className(),false))->label('Proficiencies') ?>
-
-	<div class="form-group">
+    <?= $form->field($model, 'choice_proficiencies_number')->input('number') ?>
+    <?= $form->field($model, 'choice_proficiencies')->checkboxList(\app\models\User::getUserAvailableClassArray($user->id,\app\models\Proficiency::className(),false))->label('Choice Proficiencies') ?>
+    <div class="form-group">
 		<div class="col-lg-offset-1 col-lg-11">
             <?= Html::submitButton('Save', ['class' => 'btn btn-primary', 'name' => 'campaign-button']) ?>
 		</div>

@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Background;
+use app\models\DefaultLanguages;
 use app\models\DefaultSkill;
 use app\models\ProficiencyRelation;
 use app\models\User;
@@ -94,6 +95,19 @@ class BackgroundController extends \yii\web\Controller {
                 foreach ($attributes['proficiencies'] as $proficiencyId) {
                     $SkillRelation = new ProficiencyRelation();
                     $SkillRelation->proficiency_id = $proficiencyId;
+                    $SkillRelation->background_id = $id;
+                    $SkillRelation->save();
+                }
+                foreach ($attributes['choice_proficiencies'] as $proficiencyId) {
+                    $SkillRelation = new ProficiencyRelation();
+                    $SkillRelation->proficiency_id = $proficiencyId;
+                    $SkillRelation->background_id = $id;
+                    $SkillRelation->choice = 1;
+                    $SkillRelation->save();
+                }
+                foreach ($attributes['default_languages'] as $languageId) {
+                    $SkillRelation = new DefaultLanguages();
+                    $SkillRelation->language_id = $languageId;
                     $SkillRelation->background_id = $id;
                     $SkillRelation->save();
                 }

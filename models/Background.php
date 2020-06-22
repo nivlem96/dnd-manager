@@ -21,6 +21,8 @@ use Yii;
 class Background extends \yii\db\ActiveRecord {
     public $skills_to_choose;
     public $proficiencies;
+    public $choice_proficiencies;
+    public $default_languages;
 
     /**
      * {@inheritdoc}
@@ -83,6 +85,19 @@ class Background extends \yii\db\ActiveRecord {
     }
 
     /**
+     * Gets query for [[ProficiencyRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTraits() {
+        return $this->hasMany(BackgroundTraits::className(), ['background_id' => 'id']);
+    }
+
+    public function getSpecificTraits($trait) {
+        return $this->getTraits()->where(['trait_type' => $trait]);
+    }
+
+    /**
      * Gets query for [[Choices]].
      *
      * @return \yii\db\ActiveQuery
@@ -103,7 +118,14 @@ class Background extends \yii\db\ActiveRecord {
     public function getProficiencies() {
         $relations = $this->getProficiencyRelations()->all();
         $return = [];
+        foreach ($relations as $relation) {
+            $return[] = $relation->proficiency_id;
+        }
+    }
 
+    public function getChoiceProficiencies() {
+        $relations = $this->getProficiencyRelations()->where(['choice' => 1])->all();
+        $return = [];
         foreach ($relations as $relation) {
             $return[] = $relation->proficiency_id;
         }
